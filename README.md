@@ -8,3 +8,22 @@ This is a step by step guide to install all the tools.
 
 ## Dialogflow
 
+To use Dialogflow go to https://dialogflow.cloud.google.com and sign in to your Google account. Then:
+
+- create a new agent with a name of your choice
+- click on the gear on the right of your agent name
+- select the *Export and Import* tab
+- select *Import zip* and choose the zip provided in this repository
+
+## JaCaMo
+
+Inside the `JaCaMo` folder simply run those two commands from the terminal:
+
+```bash
+gradle build
+gradle run
+```
+
+and the JaCaMo system will start. If not installed, install `gradle`.
+
+## Unity3D
