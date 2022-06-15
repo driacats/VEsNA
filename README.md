@@ -1,3 +1,3 @@
 # VEsNA
 
-VEsNA is a framework for Managing Virtual Environments via Natural Language Agents, for Factory Automation.
+VEsNA is a framework for managing **V**irtual **E**nvironments via **N**atural Language **A**gents, for Factory Automation.
