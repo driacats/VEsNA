@@ -27,3 +27,8 @@ gradle run
 and the JaCaMo system will start. If not installed, install `gradle`.
 
 ## Unity3D
+
+Open `UnityHub` and select `Open` on the top. Select the Unity project folder and open it. The version used is the `2021.2.17f1`.
+
+## Launch the System
+
