@@ -32,3 +32,13 @@ Open `UnityHub` and select `Open` on the top. Select the Unity project folder an
 
 ## Launch the System
 
+To launch the system you have also to install **ngrok** (https://ngrok.com/). Download it and install it, you have to create a free account in order to use this tool.
+Then, launch ngrok with
+
+```bash
+ngrok http 8080
+```
+
+Copy the link provided by ngrok, open the dialogflow page and go to the Fulfillment tab on the left. The first field is `URL`. Paste your url here and save at the bottom of the page.
+
+Now, launch the Unity project and the JaCaMo one as described above and you will be able to use the framework.
