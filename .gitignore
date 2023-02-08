@@ -1,2 +1,5 @@
-
-Unity/.DS_Store
+Unity/Library/
+Unity/Logs/
+Unity/Packages/
+Unity/ProjectSettings/
+Unity/UserSettings

@@ -22,6 +22,12 @@
 		reply(Result).
 
 +!answer(RequestedBy, ResponseId, IntentName, Params, Contexts)
+	:	(IntentName == "MoveActor")
+	<-	!getParameters(Params);
+		moveActor(Result);
+		reply(Result).
+
++!answer(RequestedBy, ResponseId, IntentName, Params, Contexts)
 	:	(IntentName == "Exit")
 	<-	exit(Result);
 		reply(Result).

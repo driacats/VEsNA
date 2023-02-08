@@ -140,7 +140,7 @@ namespace UnityEngine.UI
             else
                 displayIndex = currentEventCamera.targetDisplay;
 
-            var eventPosition = Display.RelativeMouseAt(eventData.position);
+            var eventPosition = MultipleDisplayUtilities.RelativeMouseAtScaled(eventData.position);
             if (eventPosition != Vector3.zero)
             {
                 // We support multiple display and display identification based on event position.
