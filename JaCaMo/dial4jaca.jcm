@@ -21,7 +21,7 @@ mas dial4jaca {
     
 	workspace wp{
 		artifact dial4JaCa: br.pucrs.smart.Dial4JaCa.Dial4JaCaArtifact
-        artifact factory: factory.Factory
+        artifact factory: stage.Stage
 	}
 	
 	platform: br.pucrs.smart.Dial4JaCa.RestArtifact("--main 2181 --restPort 8080")

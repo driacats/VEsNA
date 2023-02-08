@@ -1,0 +1,3 @@
+- [ ] Find lan ip dynamically and not hard coded
+- [ ] Make the info list an object with fields
+- [ ] 
