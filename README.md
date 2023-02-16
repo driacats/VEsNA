@@ -28,7 +28,11 @@ and the JaCaMo system will start. If not installed, install `gradle`.
 
 ## Unity3D
 
-Open `UnityHub` and select `Open` on the top. Select the Unity project folder and open it. The version used is the `2021.2.17f1`.
+In the `Unity Scripts` folder are present two files:
+ - `Listener.cs`
+ - `Actor.cs`
+Copy those two files to your Unity project.
+The `Listener.cs` script must be attached to the floor of the scene GamObject, the `Actor.cs` to the actor.
 
 ## Launch the System
 
