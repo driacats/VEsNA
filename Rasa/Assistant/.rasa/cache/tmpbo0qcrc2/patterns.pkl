@@ -1,0 +1,14 @@
+[
+  {
+    "name": "object",
+    "pattern": "(\\bbook\\b|\\bbottle\\b|\\bbox\\b|\\bcandle\\b|\\bjug\\b|\\bstool\\b|\\btable\\b|\\bchair\\b)"
+  },
+  {
+    "name": "horizontal",
+    "pattern": "(\\bleft\\b|\\bcenter\\b|\\bright\\b)"
+  },
+  {
+    "name": "vertical",
+    "pattern": "(\\bfront\\b|\\bcenter\\b|\\bbehind\\b)"
+  }
+]

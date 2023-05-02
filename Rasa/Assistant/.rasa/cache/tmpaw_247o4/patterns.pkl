@@ -1,0 +1,22 @@
+[
+  {
+    "name": "object",
+    "pattern": "(\\bbook\\b|\\bbottle\\b|\\bbox\\b|\\bcandle\\b|\\bjug\\b|\\bstool\\b|\\btable\\b|\\bchair\\b)"
+  },
+  {
+    "name": "horizontal",
+    "pattern": "(\\bleft\\b|\\bcenter\\b|\\bright\\b)"
+  },
+  {
+    "name": "vertical",
+    "pattern": "(\\bfront\\b|\\bcenter\\b|\\bbehind\\b)"
+  },
+  {
+    "name": "relative",
+    "pattern": "(\\bright\\ of\\b|\\bleft\\ of\\b|\\bbehind\\ of\\b|\\bin\\ front\\ of\\b)"
+  },
+  {
+    "name": "relName",
+    "pattern": "(\\btable0\\b|\\btable1\\b|\\btable2\\b|\\btable3\\b|\\btable4\\b|\\btable5\\b|\\btable6\\b|\\btable7\\b|\\btable8\\b|\\btable9\\b)"
+  }
+]

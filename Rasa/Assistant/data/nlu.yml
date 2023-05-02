@@ -1,0 +1,147 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+
+# Prompter Agent Language
+
+- lookup: object
+  examples: |
+    - book
+    - bottle
+    - box
+    - candle
+    - jug
+    - stool
+    - table
+    - chair
+    - cube
+
+- lookup: horizontal
+  examples: |
+    - left
+    - center
+    - right
+
+- lookup: vertical
+  examples: |
+    - front
+    - center
+    - behind
+
+- lookup: relative
+  examples: |
+    - right of
+    - left of
+    - behind of
+    - in front of
+
+- regex: relName
+  examples: |
+    - \w+[0-9]
+
+- intent: add_object
+  examples: |
+    - add a [table](object)
+    - add a [table](object) in [front](vertical) on the [right](horizontal)
+    - add a [table](object) [behind](vertical) on the [left](horizontal)
+    - add a [table](object) on the [left](horizontal)
+
+- intent: add_relative_object
+  examples: |
+    - add a [table](object) [right of](relative) [table0](relName)
+    - add a [table](object) [left of](relative) [table2](relName)
+    - add a [table](object) [behind of](relative) [table7](relName)
+    - add a [table](object) [in front of](relative) [table7](relName)
+
+- intent: remove_object
+  examples: |
+    - remove [table0](relName)
+    - remove [table3](relName)

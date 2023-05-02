@@ -1,0 +1,6 @@
+[
+  {
+    "name": "object",
+    "pattern": "(\\bbook\\b|\\bbottle\\b|\\bbox\\b|\\bcandle\\b|\\bjug\\b|\\bstool\\b|\\btable\\b|\\bchair\\b)"
+  }
+]

@@ -1,0 +1,4 @@
+{"sender": "user", "receiver": "bot", "text": "Add a table left of table0", "intent": {"name": "add_relative_object", "confidence": 0.9526165723800659}, "slots": {"object": "table", "vertical": "None", "horizontal": "None", "relative": "left of", "relName": "table0", "session_started_metadata": "None"}, "latest_action_name": "action_listen"}
+{"sender": "bot", "receiver": "user", "next_action": "utter_add_relative_object", "name": "table1" }
+{"sender": "bot", "receiver": "user", "next_action": "send_relative_info"}
+{"sender": "bot", "receiver": "user", "next_action": "action_reset_all_slots"}

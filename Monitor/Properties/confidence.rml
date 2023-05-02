@@ -1,0 +1,6 @@
+reliable_msg matches { intent: { name: _, confidence: value } } with value >= 0.6;
+
+relevant matches { intent: _ };
+
+Main = relevant >> ReliableMsg;
+ReliableMsg = reliable_msg*;

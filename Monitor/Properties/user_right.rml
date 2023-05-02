@@ -1,0 +1,12 @@
+msg_user_to_bot matches { sender:'user', receiver:'bot' };
+msg_bot_to_user matches { sender:'bot', receiver:'user' };
+add_object(x, y) matches { intent: { name: 'add_object', confidence: _ }, slots: { horizontal: x, vertical: y, object: _, relative: _, relName: _, session_started_metadata: _} };
+not_add_object(x, y) not matches add_object(x, y);
+object_added matches { next_action: 'utter_add_object' };
+
+irrelevant matches { next_action: 'send_info' } | { next_action: 'action_reset_all_slots' };
+relevant not matches irrelevant;
+
+Main = relevant >> AddObject;
+AddObject = { let x, y; (msg_user_to_bot /\ add_object(x, y)) (msg_bot_to_user /\ object_added) (ObjectNotAlreadyAdded<x, y> /\ AddObject?) };
+ObjectNotAlreadyAdded<x, y> = (not_add_object(x, y))*;

@@ -1,0 +1,22 @@
+msg_user_to_bot matches { sender:'user', receiver:'bot' };
+msg_bot_to_user matches { sender:'bot', receiver:'user' };
+add_object matches { intent: { name: 'add_object', confidence: _ }, slots: { horizontal: _, vertical: _, object: _, relative: 'None', relName: 'None', session_started_metadata: _} };
+add_object_rel(obj) matches { intent: { name: 'add_relative_object', confidence: _ }, slots: {object: _, vertical: _, horizontal: _, relative: _, relName: obj, session_started_metadata: _} };
+remove_object(obj) matches {intent: { name: 'remove_object', confidence: _ }, slots: {object: _, vertical: _, horizontal: _, relative: _, relName: obj, session_started_metadata: _} };
+object_added(obj) matches { next_action: 'utter_add_object', name: obj };
+object_added_rel(obj) matches { next_action: 'utter_add_relative_object', name: obj };
+object_removed matches { next_action: 'utter_remove_object' };
+
+irrelevant matches 
+    { next_action: 'send_info' } | 
+    { next_action: 'action_reset_all_slots' } |
+    { next_action: 'send_relative_info' } |
+    { next_action: 'send_remove_info' };
+relevant not matches irrelevant;
+
+Main = relevant >> AddObject;
+AddObject = { let obj; (msg_user_to_bot /\ add_object) (msg_bot_to_user /\ object_added(obj)) (AddObjectRel<obj> | AddObject?) };
+AddObjectRel<obj> = 
+    ((msg_user_to_bot /\ remove_object(obj)) (msg_bot_to_user /\ object_removed))
+    \/
+    { let obj1; (msg_user_to_bot /\ add_object_rel(obj)) (msg_bot_to_user /\ object_added_rel(obj1)) (AddObjectRel<obj1>? | AddObjectRel<obj>?) };
