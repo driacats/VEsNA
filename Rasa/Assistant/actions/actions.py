@@ -44,7 +44,7 @@ class SendInfo(Action):
             posY = "center"
         ws = create_connection("ws://localhost:5002/websockets/endpoint")
         print("connection created...")
-        ws.send("intent = " + tracker.latest_message['intent'].get('name') + ",obj = " + obj + ",posX = " + posX + ",posY = " + posY)
+        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\",\"obj\": \"" + obj + "\", \"posX\": \"" + posX + "\", \"posY\": \"" + posY + "\"}")
         print("Sending...")
         result = ws.recv()
         print("getting the result...")
@@ -64,7 +64,7 @@ class SendRelativeInfo(Action):
         relPos = tracker.get_slot("relative")
         relName = tracker.get_slot("relName")
         ws = create_connection("ws://localhost:5002/websockets/endpoint")
-        ws.send("intent = " + tracker.latest_message['intent'].get('name') + ",obj = " + obj + ",relative = " + relPos + ",relName = " + relName)
+        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\", \"obj\": \"" + obj + "\", \"relative\": \"" + relPos + "\", \"relName\": \"" + relName + "\"}")
         result = ws.recv()
         ws.close()
 
@@ -77,6 +77,6 @@ class SendRemoveInfo(Action):
         print("[SEND REMOVE INFO] time: ", time.time())
         relName = tracker.get_slot("relName")
         ws = create_connection("ws://localhost:5002/websockets/endpoint")
-        ws.send("intent = " + tracker.latest_message['intent'].get('name') + ",relName = " + relName)
+        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\", \"relName\": \"" + relName + "\"}")
         result = ws.recv()
         ws.close()

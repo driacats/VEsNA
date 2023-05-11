@@ -14,23 +14,16 @@
 
 mas dial4jaca {
 
-    agent sample_agent:sample_agent.asl{
-        focus: dial4JaCa, stage
-     	goals: hello
-    }
     agent prompter:prompter.asl{
         focus: webSocketServer, client, stage
         goals: start
     }
     
 	workspace wp{
-		artifact dial4JaCa: br.pucrs.smart.Dial4JaCa.Dial4JaCaArtifact
         artifact webSocketServer: websocketserver.WebSocketServer
         artifact client: stage.Client
         artifact stage: stage.Stage
 	}
-	
-	platform: br.pucrs.smart.Dial4JaCa.RestArtifact("--main 2181 --restPort 8080")
 
 }
 

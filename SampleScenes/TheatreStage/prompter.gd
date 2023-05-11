@@ -72,26 +72,26 @@ func parse_instruction(instruction_string):
 	var position = Vector3(0.0, 2.0, 0.0)
 	if instruction["globAddition"] == "true":
 		if instruction["posX"] == "right":
-			position -= Vector3(0.0, 0.0, 2.0)
-		elif instruction["posX"] == "left":
-			position += Vector3(0.0, 0.0, 2.0)
-		if instruction["posY"] == "front":
 			position += Vector3(3.0, 0.0, 0.0)
-		elif instruction["posY"] == "behind":
+		elif instruction["posX"] == "left":
 			position -= Vector3(3.0, 0.0, 0.0)
+		if instruction["posY"] == "front":
+			position += Vector3(0.0, 0.0, 2.0)
+		elif instruction["posY"] == "behind":
+			position -= Vector3(0.0, 0.0, 2.0)
 	elif instruction["relAddition"] == "true":
 		if not has_node(instruction["objRel"]):
 			return "ERROR"
 		var rel_node = get_node(instruction["objRel"])
 		position += rel_node.position
-		if instruction["posRel"] == "right of":
-			position -= Vector3(0.0, 0.0, 1.25)
-		elif instruction["posRel"] == "left of":
-			position += Vector3(0.0, 0.0, 1.25)
-		elif instruction["posRel"] == "in front of":
+		if instruction["posRel"] == "right_of":
 			position += Vector3(1.25, 0.0, 0.0)
-		elif instruction["posRel"] == "behind of":
+		elif instruction["posRel"] == "left_of":
 			position -= Vector3(1.25, 0.0, 0.0)
+		elif instruction["posRel"] == "in_front_of":
+			position += Vector3(0.0, 0.0, 1.25)
+		elif instruction["posRel"] == "behind_of":
+			position -= Vector3(0.0, 0.0, 1.25)
 	elif instruction["removal"] == "true":
 		return instruction["objRel"]
 	return position

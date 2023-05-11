@@ -85,7 +85,7 @@ public class Infos{
     }
 
     public String buildPayload(){
-        String payload = "{"; 
+        String payload = "{";
         payload += "\"relAddition\":  \""   + this.relAddition  + "\",\n";
         payload += "\"globAddition\":  \""  + this.globAddition + "\",\n";
         payload += "\"removal\":  \""       + this.removal      + "\",\n";
