@@ -1,16 +1,8 @@
-[gd_scene load_steps=29 format=3 uid="uid://bneqrpxolps73"]
+[gd_scene load_steps=27 format=3 uid="uid://bukukh4hltrbr"]
 
 [ext_resource type="Script" path="res://prompter.gd" id="1_eboch"]
-[ext_resource type="ArrayMesh" uid="uid://dkbysmqo1etot" path="res://chair.obj" id="2_bh8vh"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pj3nu"]
-albedo_color = Color(0.65098, 0.482353, 0.356863, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4aixg"]
-albedo_color = Color(0.65098, 0.482353, 0.356863, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mu76"]
-albedo_color = Color(0.65098, 0.482353, 0.356863, 1)
+[ext_resource type="ArrayMesh" uid="uid://dkbysmqo1etot" path="res://objects/chair.obj" id="2_m5e1x"]
+[ext_resource type="Material" uid="uid://b6mde0vktdtqe" path="res://objects/chair.tres" id="3_4xldm"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_k85vu"]
 
@@ -76,297 +68,297 @@ script = ExtResource("1_eboch")
 
 [node name="Chair1" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -8, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair2" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair3" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair4" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair5" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair6" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair7" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair8" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair9" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2.08165e-12, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair10" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair11" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair12" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair13" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair14" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair15" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair16" type="MeshInstance3D" parent="Architecture Env/Chairs/Row A"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_pj3nu")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Row B" type="Node3D" parent="Architecture Env/Chairs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 2)
 
 [node name="Chair1" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -8, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair2" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair3" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair4" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair5" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair6" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair7" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair8" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair9" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2.08165e-12, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair10" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair11" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair12" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair13" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair14" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair15" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair16" type="MeshInstance3D" parent="Architecture Env/Chairs/Row B"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_4aixg")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Row C" type="Node3D" parent="Architecture Env/Chairs"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 4)
 
 [node name="Chair1" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -8, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair2" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair3" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair4" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair5" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair6" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair7" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair8" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, -1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair9" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2.08165e-12, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair10" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 1, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair11" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 2, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair12" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 3, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair13" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 4, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair14" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 5, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair15" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 6, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Chair16" type="MeshInstance3D" parent="Architecture Env/Chairs/Row C"]
 transform = Transform3D(-1, 3.48787e-16, -8.74228e-08, 3.48787e-16, 1, -3.48787e-16, 8.74228e-08, -3.48787e-16, -1, 7, 0.4, 7)
-mesh = ExtResource("2_bh8vh")
+mesh = ExtResource("2_m5e1x")
 skeleton = NodePath("../../../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_7mu76")
+surface_material_override/0 = ExtResource("3_4xldm")
 
 [node name="Frontone" type="MeshInstance3D" parent="Architecture Env"]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 9, 4)

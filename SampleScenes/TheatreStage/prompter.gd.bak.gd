@@ -10,12 +10,10 @@ var right : Vector3 = Vector3(0.0, 0.0, 0.0)
 var behind : Vector3 = Vector3(0.0, 0.0, 0.0)
 var front : Vector3 = Vector3(0.0, 0.0, 0.0)
 var obj_counters = {}
-var obj_meshes = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	server.listen(PORT, ADDRESS) # Make the server start
-	
 	if has_node("StageStructure/Stage/Stage"):
 		var stage = get_node("StageStructure/Stage/Stage")
 		center = stage.position
@@ -24,10 +22,6 @@ func _ready():
 		right[0] = center[0] + dims[0] / 4
 		behind[2] = center[2] - dims[2] / 4
 		front[2] = center[2] + dims[2] / 4
-		
-	obj_meshes["cube"] = BoxMesh.new()
-	obj_meshes["table"] = load("res://objects/table.obj")
-	obj_meshes["chair"] = load("res://objects/chair.obj")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -62,22 +56,25 @@ func add_object(obj_name, position):
 	new_body.position = position # Assign the position
 	new_body.mass = 1.0
 	new_body.set_name(new_name)
-	
+	# cube_counter += 1
 	var new_material = PhysicsMaterial.new() # Create a new Physics Material
 	new_material.bounce = 0.3 # Set a certain low value for bounce
 	new_body.set_physics_material_override(new_material) # Set the Physics Material in the RigidBody3D
 	add_child(new_body) # Add the RigidBody to scene
-	
 	# Add a table start
+	#var new_mesh = MeshInstance3D.new() # Create a mesh
+	#new_mesh.mesh = load("res://table.obj")
+	#new_mesh.create_trimesh_collision()
+	#new_body.add_child(new_mesh) # Add it to the scene
+	# Add a table end
 	var new_mesh = MeshInstance3D.new() # Create a mesh
-	new_mesh.mesh = obj_meshes[obj_name]
+	new_mesh.mesh = BoxMesh.new()
+	#new_mesh.create_trimesh_collision()
 	new_body.add_child(new_mesh) # Add it to the scene
-	
-	var collision_shape = ConvexPolygonShape3D.new()
-	collision_shape.set_points(new_mesh.mesh.get_faces())
-	var collision_shape_owner = CollisionShape3D.new()
-	collision_shape_owner.shape = collision_shape
-	new_body.add_child(collision_shape_owner)
+	#new_body.set_scale(Vector3(2.0, 2.0, 2.0))
+	var new_collision = CollisionShape3D.new() # Crea a new CollisionShape
+	new_collision.shape = BoxShape3D.new() # Assign it a Box Collision Shape 
+	new_body.add_child(new_collision) # Add it to the scene
 	return new_name
 	
 # Function that given a name of an object removes it

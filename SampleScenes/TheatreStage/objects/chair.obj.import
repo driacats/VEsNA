@@ -1,0 +1,21 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dkbysmqo1etot"
+path="res://.godot/imported/chair.obj-17332fa573058f8894fb703dc35607b0.mesh"
+
+[deps]
+
+files=["res://.godot/imported/chair.obj-17332fa573058f8894fb703dc35607b0.mesh"]
+
+source_file="res://objects/chair.obj"
+dest_files=["res://.godot/imported/chair.obj-17332fa573058f8894fb703dc35607b0.mesh", "res://.godot/imported/chair.obj-17332fa573058f8894fb703dc35607b0.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
