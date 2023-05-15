@@ -15,8 +15,6 @@ import java.io.OutputStream;
 
 import org.json.JSONObject;
 
-import com.google.gson.JsonObject;
-
 // JaCaMo
 import jason.asSyntax.Literal;
 import static jason.asSyntax.ASSyntax.*;
@@ -28,7 +26,10 @@ import jason.bb.BeliefBase;
 
 // Java Sets
 import java.util.Arrays; 
-import java.util.Set; 
+import java.util.Set;
+
+import javax.json.JsonObject;
+
 import java.util.HashSet;
 
 public class Stage extends Artifact{
@@ -64,10 +65,10 @@ public class Stage extends Artifact{
         System.out.println("[STAGE] Connection on 127.0.0.1:9080");
         Client client = new Client();
         client.startConnection("127.0.0.1", 9080);
-        StringBuilder result = new StringBuilder(client.sendMessage(payload));
-        System.out.println("[STAGE] Get Answer: " + result);
+        StringBuilder answer = new StringBuilder(client.sendMessage(payload));
+        System.out.println("[STAGE] Get Answer: " + answer.toString());
         client.stopConnection();
-        return result.toString();
+        return answer.toString();
     }
 
     Infos organizeInfo(String infos){
@@ -105,7 +106,7 @@ public class Stage extends Artifact{
     }
         
     @OPERATION
-    void addObjectGlobal(String obj, String posX, String posY, OpFeedbackParam<String> result){
+    void addObjectGlobal(String obj, String posX, String posY, OpFeedbackParam<Literal> result){
         JSONObject JsonInfo = new JSONObject();
         JsonInfo.put("intent", addObjectIntentName);
         JsonInfo.put("obj", obj);
@@ -113,17 +114,14 @@ public class Stage extends Artifact{
         JsonInfo.put("posY", posY);
         Infos newInfos = organizeInfo(JsonInfo.toString());
         try{
-            String response = sendRequest(newInfos);
-            if (response.contains("correct")){
-                result.set(doneResponse(response)); 
-            }
+            result.set(Literal.parseLiteral(sendRequest(newInfos).replaceAll("\\P{Print}", "")));
         }catch(Exception e){
             System.out.println(e);
         }
     }
 
     @OPERATION
-    void addObjectRelative(String obj, String posRel, String objRel, OpFeedbackParam<String> result){
+    void addObjectRelative(String obj, String posRel, String objRel, OpFeedbackParam<Literal> result){
         JSONObject JsonInfo = new JSONObject();
         JsonInfo.put("intent", addRelativeObjectIntentName);
         JsonInfo.put("obj", obj);
@@ -131,26 +129,24 @@ public class Stage extends Artifact{
         JsonInfo.put("relName", objRel);
         Infos newInfos = organizeInfo(JsonInfo.toString());
         try{
-            String response = sendRequest(newInfos);
-            if (response.contains("correct")){
-                result.set(doneResponse(response)); 
-            }
+            result.set(Literal.parseLiteral(sendRequest(newInfos).replaceAll("\\P{Print}", "")));
         }catch(Exception e){
             System.out.println(e);
         }
     }
 
     @OPERATION
-    void removeObject(String objRel, OpFeedbackParam<String> result){
+    void removeObject(String objRel, OpFeedbackParam<Literal> result){
+        System.out.println("[STAGE] removeObject");
         JSONObject JsonInfo = new JSONObject();
         JsonInfo.put("intent", removeObjectIntentName);
         JsonInfo.put("relName", objRel);
+        System.out.println("[STAGE] json created: " + JsonInfo.toString());
         Infos newInfos = organizeInfo(JsonInfo.toString());
+        System.out.println("[STAGE] info organized");
         try{
-            String response = sendRequest(newInfos);
-            if (response.contains("correct")){
-                result.set(doneResponse(response)); 
-            }
+            System.out.println("[STAGE] sending request");
+            result.set(Literal.parseLiteral(sendRequest(newInfos).replaceAll("\\P{Print}", "")));
         }catch(Exception e){
             System.out.println(e);
         }

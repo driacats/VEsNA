@@ -2,13 +2,25 @@ extends Node
 
 const PORT = 9080
 const ADDRESS = "127.0.0.1"
-#const ADDRESS = "localhost"
 var server = TCPServer.new()
 var cube_counter = 0
+var center = Vector3(0.0, 0.0, 0.0)
+var left = Vector3(0.0, 0.0, 0.0)
+var right = Vector3(0.0, 0.0, 0.0)
+var behind = Vector3(0.0, 0.0, 0.0)
+var front = Vector3(0.0, 0.0, 0.0)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	server.listen(PORT, ADDRESS) # Make the server start
+	if has_node("StageStructure/Stage/Stage"):
+		var stage = get_node("StageStructure/Stage/Stage")
+		center = stage.position
+		var dims = stage.scale
+		left[0] = center[0] - dims[0] / 4
+		right[0] = center[0] + dims[0] / 4
+		behind[2] = center[2] - dims[2] / 4
+		front[2] = center[2] + dims[2] / 4
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -20,10 +32,12 @@ func _process(_delta):
 			if position is String:
 				if position != "ERROR":
 					remove_object(position)
-					client.put_string("{\"Removed\": \"" + position + "\", \"status\": \"correct\"}")
+					client.put_string(position)
+				else:
+					client.put_string("ERROR")
 			elif check_position(position): # If the position is available
 				var new_name = add_object(position) # Add the object in the given position
-				client.put_string("{\"Added\": \"" + new_name + "\", \"status\": \"correct\"}")
+				client.put_string(new_name)
 
 func check_position(position):
 	for child in get_children():
@@ -66,33 +80,41 @@ func remove_object(obj_name):
 		var cube = get_node(obj_name)
 		cube.free()
 
+func compute_global_position(instruction):
+	var position = Vector3(0.0, 2.0, 0.0)
+	if instruction["posX"] == "right":
+		position += right
+	elif instruction["posX"] == "left":
+		position += left
+	if instruction["posY"] == "front":
+		position += front
+	elif instruction["posY"] == "behind":
+		position += behind
+	return position
+
+func compute_relative_position(instruction):
+	var position = Vector3(0.0, 2.0, 0.0)
+	var rel_node = get_node(instruction["objRel"])
+	position += rel_node.position
+	if instruction["posRel"] == "right_of":
+		position += Vector3(1.25, 0.0, 0.0)
+	elif instruction["posRel"] == "left_of":
+		position -= Vector3(1.25, 0.0, 0.0)
+	elif instruction["posRel"] == "in_front_of":
+		position += Vector3(0.0, 0.0, 1.25)
+	elif instruction["posRel"] == "behind_of":
+		position -= Vector3(0.0, 0.0, 1.25)
+	return position
+
 # Function that given a JSON string containing the instructions for the operation to perform it makes it ready to use for Godot
 func parse_instruction(instruction_string):
 	var instruction = JSON.parse_string(instruction_string)
-	var position = Vector3(0.0, 2.0, 0.0)
 	if instruction["globAddition"] == "true":
-		if instruction["posX"] == "right":
-			position += Vector3(3.0, 0.0, 0.0)
-		elif instruction["posX"] == "left":
-			position -= Vector3(3.0, 0.0, 0.0)
-		if instruction["posY"] == "front":
-			position += Vector3(0.0, 0.0, 2.0)
-		elif instruction["posY"] == "behind":
-			position -= Vector3(0.0, 0.0, 2.0)
+		return compute_global_position(instruction)
 	elif instruction["relAddition"] == "true":
 		if not has_node(instruction["objRel"]):
 			return "ERROR"
-		var rel_node = get_node(instruction["objRel"])
-		position += rel_node.position
-		if instruction["posRel"] == "right_of":
-			position += Vector3(1.25, 0.0, 0.0)
-		elif instruction["posRel"] == "left_of":
-			position -= Vector3(1.25, 0.0, 0.0)
-		elif instruction["posRel"] == "in_front_of":
-			position += Vector3(0.0, 0.0, 1.25)
-		elif instruction["posRel"] == "behind_of":
-			position -= Vector3(0.0, 0.0, 1.25)
+		return compute_relative_position(instruction)
 	elif instruction["removal"] == "true":
 		return instruction["objRel"]
-	return position
 	

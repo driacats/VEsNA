@@ -487,14 +487,14 @@ mesh = SubResource("BoxMesh_2jy0s")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_xsuhx")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="StageStructure"]
+[node name="Stage" type="StaticBody3D" parent="StageStructure"]
 physics_material_override = SubResource("PhysicsMaterial_2w4y4")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StageStructure/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StageStructure/Stage"]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 8, 2.08165e-12, 0.5, 2.08165e-12)
 shape = SubResource("BoxShape3D_qmwff")
 
-[node name="Stage" type="MeshInstance3D" parent="StageStructure/StaticBody3D"]
+[node name="Stage" type="MeshInstance3D" parent="StageStructure/Stage"]
 transform = Transform3D(20, 0, 0, 0, 1, 0, 0, 0, 8, 2.08165e-12, 0.5, 2.08165e-12)
 mesh = SubResource("BoxMesh_p35u7")
 skeleton = NodePath("../../..")
