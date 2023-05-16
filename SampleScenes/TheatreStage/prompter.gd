@@ -11,6 +11,7 @@ var behind : Vector3 = Vector3(0.0, 0.0, 0.0)
 var front : Vector3 = Vector3(0.0, 0.0, 0.0)
 var obj_counters = {}
 var obj_meshes = {}
+var actor_meshes = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -28,6 +29,7 @@ func _ready():
 	obj_meshes["cube"] = BoxMesh.new()
 	obj_meshes["table"] = load("res://objects/table.obj")
 	obj_meshes["chair"] = load("res://objects/chair.obj")
+	actor_meshes["actor"] = load("res://characters/actor.obj")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -38,12 +40,25 @@ func _process(_delta):
 			var instruction = parse_instruction(instruction_string) # From JSON string to Vector3 position
 			var obj_name = instruction[0]
 			var position = instruction[1]
-			if position == null:
-				remove_object(obj_name)
-				client.put_string(obj_name)
-			else:
-				var new_name = add_object(obj_name, position)
-				client.put_string(new_name)
+			var action = instruction[2]
+			var new_name
+			if action == "object":
+				new_name = add_object(obj_name, position)
+			elif action == "actor":
+				new_name = add_actor(obj_name, position)
+			elif action == "remove":
+				new_name = remove_object(obj_name)
+			client.put_string(new_name)
+			#if position == null:
+			#	remove_object(obj_name)
+			#	client.put_string(obj_name)
+			#else:
+			#	var new_name
+			#	if obj_name == "actor":
+			#		new_name = add_actor(obj_name, position)
+			#	else:
+			#		new_name = add_object(obj_name, position)
+			#	client.put_string(new_name)
 
 func check_position(position):
 	for child in get_children():
@@ -80,12 +95,35 @@ func add_object(obj_name, position):
 	new_body.add_child(collision_shape_owner)
 	return new_name
 	
+func add_actor(actor_name, position):
+	print("add_actor")
+	var new_body = RigidBody3D.new()
+	new_body.position = position
+	new_body.mass = 1.0
+	new_body.set_name(actor_name)
+	
+	var new_material = PhysicsMaterial.new()
+	new_body.set_physics_material_override(new_material)
+	add_child(new_body)
+	
+	var new_mesh = MeshInstance3D.new()
+	new_mesh.mesh = actor_meshes["actor"]
+	new_body.add_child(new_mesh)
+	
+	var collision_shape = ConvexPolygonShape3D.new()
+	collision_shape.set_points(new_mesh.mesh.get_faces())
+	var collision_shape_owner = CollisionShape3D.new()
+	collision_shape_owner.shape = collision_shape
+	new_body.add_child(collision_shape_owner)
+	return actor_name
+	
 # Function that given a name of an object removes it
 # TODO: Add a "all" parameter to empty the scene
 func remove_object(obj_name):
 	if has_node(obj_name):
 		var cube = get_node(obj_name)
 		cube.free()
+	return obj_name
 
 func compute_global_position(instruction):
 	var position = Vector3(0.0, 2.0, 0.0)
@@ -117,11 +155,16 @@ func compute_relative_position(instruction):
 func parse_instruction(instruction_string):
 	var instruction = JSON.parse_string(instruction_string)
 	if instruction["globAddition"] == "true":
-		return [instruction["objName"], compute_global_position(instruction)]
+		return [instruction["objName"], compute_global_position(instruction), "object"]
 	elif instruction["relAddition"] == "true":
 		if not has_node(instruction["objRel"]):
 			return "ERROR"
-		return [instruction["objName"], compute_relative_position(instruction)]
+		return [instruction["objName"], compute_relative_position(instruction), "object"]
+	elif instruction["actorAddition"] == "true":
+		if instruction["posX"]:
+			return [instruction["actorName"], compute_global_position(instruction), "actor"]
+		elif instruction["posRel"]:
+			return [instruction["actorName"], compute_relative_position(instruction), "actor"]
 	elif instruction["removal"] == "true":
-		return [instruction["objRel"], null]
+		return [instruction["objRel"], null, "remove"]
 	

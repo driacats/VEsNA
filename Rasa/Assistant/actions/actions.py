@@ -33,16 +33,17 @@ class SendInfo(Action):
         instruction = {}
         instruction['intent'] = tracker.latest_message['intent'].get('name')
         instruction['obj'] = tracker.get_slot('object')
-        if instruction['intent'] == 'add_object' and tracker.get_slot('horizontal') is None:
+        if instruction['intent'] in ('add_object', 'add_actor') and tracker.get_slot('horizontal') is None:
             instruction['posX'] = 'center'
         else:
             instruction['posX'] = tracker.get_slot('horizontal')
-        if instruction['intent'] == 'add_object' and tracker.get_slot('vertical') is None:
+        if instruction['intent'] in ('add_object', 'add_actor') and tracker.get_slot('vertical') is None:
             instruction['posY'] = 'center'
         else:
             instruction['posY'] = tracker.get_slot('vertical')
         instruction['relative'] = tracker.get_slot('relative')
         instruction['relName'] = tracker.get_slot('relName')
+        instruction['actorName'] = tracker.get_slot('actorName')
         ws = create_connection(self.mas_server)
         print("connection created...")
         ws.send(json.dumps(instruction))

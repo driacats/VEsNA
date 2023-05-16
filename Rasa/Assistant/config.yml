@@ -28,6 +28,7 @@ policies:
 - name: TEDPolicy
   max_history: 10
   epochs: 20
+  constrain_similarities: True
   batch_size:
   - 32
   - 64

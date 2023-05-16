@@ -10,8 +10,6 @@ import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.Scanner;
 
-import javax.json.JsonObject;
-
 import jason.asSyntax.Literal;
 
 import org.json.JSONObject;
@@ -22,7 +20,7 @@ public class WebSocketServer extends Artifact{
 	private Server server;
 
 	@OPERATION
-	public void listen(OpFeedbackParam<Literal> intent, OpFeedbackParam<Literal> obj, OpFeedbackParam<Literal> posX, OpFeedbackParam<Literal> posY, OpFeedbackParam< Literal> posRel, OpFeedbackParam<Literal> objRel, OpFeedbackParam<Literal> direction)  throws Exception{
+	public void listen(OpFeedbackParam<Literal> intent, OpFeedbackParam<Literal> obj, OpFeedbackParam<Literal> posX, OpFeedbackParam<Literal> posY, OpFeedbackParam< Literal> posRel, OpFeedbackParam<Literal> objRel, OpFeedbackParam<Literal> direction, OpFeedbackParam<Literal> actorName)  throws Exception{
 		Endpoint endpoint = new Endpoint();
 		Server server = new Server("localhost", PORT, "/websockets", null, endpoint.getClass());
 		try {
@@ -47,6 +45,8 @@ public class WebSocketServer extends Artifact{
 				objRel.set(Literal.parseLiteral(info.getString("relName")));
 			if (info.has("direction") && !info.isNull("direction"))
 				direction.set(Literal.parseLiteral(info.getString("direction")));
+			if (info.has("actorName") && !info.isNull("actorName"))
+				actorName.set(Literal.parseLiteral(info.getString("actorName").toLowerCase()));
 			endpoint.resultString = null;
 		} catch (Exception e) {
 			e.printStackTrace();

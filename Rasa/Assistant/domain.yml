@@ -12,6 +12,7 @@ intents:
   - add_relative_object
   - add_actor
   - remove_object
+  - actor_name
 
 entities:
   - object
@@ -19,6 +20,7 @@ entities:
   - horizontal
   - relative
   - relName
+  - actorName
 
 slots:
   object:
@@ -51,12 +53,16 @@ slots:
     mappings:
       - type: from_entity
         entity: relName
+  actorName:
+    type: text
+    influence_conversation: False
+    mappings:
+      - type: from_entity
+        entity: actorName
   
 actions:
   - action_reset_all_slots
   - send_info
-  - send_relative_info
-  - send_remove_info
 
 responses:
   utter_greet:
@@ -87,8 +93,14 @@ responses:
   utter_remove_object:
   - text: "Remove object intent here, received: {relName}"
 
+  utter_add_actor:
+  - text: "Add actor intent here, received: {actorName}"
+
   utter_error_message:
   - text: "You cannot say `bot` inside a sentence!"
+
+  utter_ask_name:
+  - text: "What is the actor name?"
 
 session_config:
   session_expiration_time: 60

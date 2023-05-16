@@ -46,6 +46,7 @@ public class Stage extends Artifact{
     private final String addObjectIntentName = "add_object";
     private final String addRelativeObjectIntentName = "add_relative_object";
     private final String removeObjectIntentName = "remove_object";
+    private final String addActorIntentName = "add_actor";
 
     public BeliefBase bb;
 
@@ -72,8 +73,10 @@ public class Stage extends Artifact{
     }
 
     Infos organizeInfo(String infos){
+        System.out.println("[STAGE] organizeInfo");
         Infos newInfos = new Infos();
         JSONObject objInfo = new JSONObject(infos);
+        System.out.println("[STAGE] organizeInfo, intent");
         if (objInfo.has("intent")){
             switch (objInfo.getString("intent")){
                 case addObjectIntentName:
@@ -85,22 +88,33 @@ public class Stage extends Artifact{
                 case removeObjectIntentName:
                     newInfos.removal = true;
                     break;
+                case addActorIntentName:
+                    newInfos.actorAddition = true;
+                    break;
                 default:
                     System.out.println("[STAGE] ERROR: Intent name not available.");
             }
         } else{
             System.out.println("[STAGE] ERROR: Intent name not provided");
         }
-        if (objInfo.has("obj"))
+        System.out.println("[STAGE] organizeInfo, obj");
+        if (objInfo.has("obj") && !objInfo.isNull("obj"))
             newInfos.objName = objInfo.getString("obj");
-        if (objInfo.has("posX"))
+        System.out.println("[STAGE] organizeInfo, posX");
+        if (objInfo.has("posX") && !objInfo.isNull("posX"))
             newInfos.posX = objInfo.getString("posX");
-        if (objInfo.has("posY"))
+        System.out.println("[STAGE] organizeInfo, posY");
+        if (objInfo.has("posY") && !objInfo.isNull("posY"))
             newInfos.posY = objInfo.getString("posY");
-        if (objInfo.has("relative"))
+        System.out.println("[STAGE] organizeInfo, relative");
+        if (objInfo.has("relative") && !objInfo.isNull("relative"))
             newInfos.posRel = objInfo.getString("relative");
-        if (objInfo.has("relName"))
+        System.out.println("[STAGE] organizeInfo, relName");
+        if (objInfo.has("relName") && !objInfo.isNull("relName"))
             newInfos.objRel = objInfo.getString("relName");
+        System.out.println("[STAGE] organizeInfo, actorName");
+        if (objInfo.has("actorName") && !objInfo.isNull("actorName"))
+            newInfos.actorName = objInfo.getString("actorName");
         
         return newInfos;
     }
@@ -128,6 +142,22 @@ public class Stage extends Artifact{
         JsonInfo.put("relative", posRel);
         JsonInfo.put("relName", objRel);
         Infos newInfos = organizeInfo(JsonInfo.toString());
+        try{
+            result.set(Literal.parseLiteral(sendRequest(newInfos).replaceAll("\\P{Print}", "")));
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+
+    @OPERATION
+    void addActor(String actorName, String posX, String posY, OpFeedbackParam<Literal> result){
+        JSONObject JsonInfo = new JSONObject();
+        JsonInfo.put("intent", addActorIntentName);
+        JsonInfo.put("posX", posX);
+        JsonInfo.put("posY", posY);
+        JsonInfo.put("actorName", actorName);
+        Infos newInfos = organizeInfo(JsonInfo.toString());
+        System.out.println("[STAGE] newInfos: " + newInfos.buildPayload());
         try{
             result.set(Literal.parseLiteral(sendRequest(newInfos).replaceAll("\\P{Print}", "")));
         }catch(Exception e){
