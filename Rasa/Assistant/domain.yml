@@ -10,6 +10,7 @@ intents:
   - bot_challenge
   - add_object
   - add_relative_object
+  - add_actor
   - remove_object
 
 entities:

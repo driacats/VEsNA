@@ -42,12 +42,18 @@ stories:
   steps:
   - intent: add_relative_object
   - action: utter_add_relative_object
-  - action: send_relative_info
+  - action: send_info
+  - action: action_reset_all_slots
+
+- story: add actor
+  steps:
+  - intent: add_actor
+  - action: send_info
   - action: action_reset_all_slots
 
 - story: remove object
   steps:
   - intent: remove_object
   - action: utter_remove_object
-  - action: send_remove_info
+  - action: send_info
   - action: action_reset_all_slots

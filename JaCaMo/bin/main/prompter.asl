@@ -1,6 +1,8 @@
 +!start
     :   true
     <-  .print("Starting prompter");
+        // These lines create a new agent called actor with the file actor.asl
+        // And sends to actor a goal.
         // .create_agent(actor, "actor.asl");
         // .send(actor, achieve, start);
         +prompter(listening).
@@ -42,6 +44,10 @@
         removeObject(ObjRel, Result);
         -instruction(remove_object, ObjName, PosX, PosY, PosRel, ObjRel, Direction);
         -object(ObjRel, _, _).
+
++instruction(add_actor, ObjName, PosX, PosY, PosRel, ObjRel, Direction)
+    <- .print("Intent add actor");
+        +actor(PosX, PosY).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

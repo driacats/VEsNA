@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.util.Scanner;
+
+import javax.json.JsonObject;
+
 import jason.asSyntax.Literal;
 
 import org.json.JSONObject;
 
 public class WebSocketServer extends Artifact{
-	// static String resultString;
 	private int PORT = 5002;
 	private boolean inited = false;
 	private Server server;
@@ -33,17 +35,17 @@ public class WebSocketServer extends Artifact{
 			JSONObject info = new JSONObject(endpoint.resultString);
 			if (info.has("intent"))
 				intent.set(Literal.parseLiteral(info.getString("intent")));
-			if (info.has("obj"))
+			if (info.has("obj") && !info.isNull("obj"))
 				obj.set(Literal.parseLiteral(info.getString("obj")));
-			if (info.has("posX"))
+			if (info.has("posX") && !info.isNull("posX"))
 				posX.set(Literal.parseLiteral(info.getString("posX")));
-			if (info.has("posY"))
+			if (info.has("posY") && !info.isNull("posY"))
 				posY.set(Literal.parseLiteral(info.getString("posY")));
-			if (info.has("relative"))
-				posRel.set(Literal.parseLiteral(info.getString("relative").replace(" ", "_")));
-			if (info.has("relName"))
+			if (info.has("relative") && !info.isNull("relative"))
+				posRel.set(Literal.parseLiteral(info.getString("relative").replaceAll(" ", "_")));
+			if (info.has("relName") && !info.isNull("relName"))
 				objRel.set(Literal.parseLiteral(info.getString("relName")));
-			if (info.has("direction"))
+			if (info.has("direction") && !info.isNull("direction"))
 				direction.set(Literal.parseLiteral(info.getString("direction")));
 			endpoint.resultString = null;
 		} catch (Exception e) {

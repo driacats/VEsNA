@@ -14,3 +14,7 @@ config/name="TheatreStage"
 run/main_scene="res://TheatreStage.tscn"
 config/features=PackedStringArray("4.0", "Forward Plus")
 config/icon="res://icon.svg"
+
+[filesystem]
+
+import/fbx/enabled=false

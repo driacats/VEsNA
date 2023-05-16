@@ -11,7 +11,7 @@ from rasa_sdk import Action
 from rasa_sdk.events import AllSlotsReset
 #from rasa_sdk.executor import CollectingDispatcher
 #import socket
-import time
+import json
 from websocket import create_connection
 
 class ActionResetAllSlots(Action):
@@ -20,63 +20,33 @@ class ActionResetAllSlots(Action):
         return "action_reset_all_slots"
 
     def run(self, dispatcher, tracker, domain):
-        print("[RESET ALL SLOTS] time: ", time.time())
         return [AllSlotsReset()]
 
 class SendInfo(Action):
 
+    mas_server = "ws://localhost:5002/websockets/endpoint"
+
     def name(self):
         return "send_info"
-
+    
     def run(self, dispatcher, tracker, domain):
-        print("[SEND INFO] time: ", time.time())
-        obj = tracker.get_slot("object")
-        dispatcher.utter_message(text="[SendInfo] object:" + obj)
-        posX = tracker.get_slot("horizontal")
-        if posX is not None:
-            dispatcher.utter_message(text="[SendInfo] horizontal:" + posX)
+        instruction = {}
+        instruction['intent'] = tracker.latest_message['intent'].get('name')
+        instruction['obj'] = tracker.get_slot('object')
+        if instruction['intent'] == 'add_object' and tracker.get_slot('horizontal') is None:
+            instruction['posX'] = 'center'
         else:
-            posX = "center"
-        posY = tracker.get_slot("vertical")
-        if posY is not None:
-            dispatcher.utter_message(text="[SendInfo] vertical: " + posY)
+            instruction['posX'] = tracker.get_slot('horizontal')
+        if instruction['intent'] == 'add_object' and tracker.get_slot('vertical') is None:
+            instruction['posY'] = 'center'
         else:
-            posY = "center"
-        ws = create_connection("ws://localhost:5002/websockets/endpoint")
+            instruction['posY'] = tracker.get_slot('vertical')
+        instruction['relative'] = tracker.get_slot('relative')
+        instruction['relName'] = tracker.get_slot('relName')
+        ws = create_connection(self.mas_server)
         print("connection created...")
-        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\",\"obj\": \"" + obj + "\", \"posX\": \"" + posX + "\", \"posY\": \"" + posY + "\"}")
-        print("Sending...")
+        ws.send(json.dumps(instruction))
+        print("sending...")
         result = ws.recv()
-        print("getting the result...")
-        ws.close()
-
-
-class SendRelativeInfo(Action):
-
-    def name(self):
-        return "send_relative_info"
-
-    def run(self, dispatcher, tracker, domain):
-        print("[SEND RELATIVE INFO] time: ", time.time())
-        print("Hello from send_relative_info")
-        obj = tracker.get_slot("object")
-        dispatcher.utter_message(text="[SendRelativeInfo] object:" + obj)
-        relPos = tracker.get_slot("relative")
-        relName = tracker.get_slot("relName")
-        ws = create_connection("ws://localhost:5002/websockets/endpoint")
-        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\", \"obj\": \"" + obj + "\", \"relative\": \"" + relPos + "\", \"relName\": \"" + relName + "\"}")
-        result = ws.recv()
-        ws.close()
-
-class SendRemoveInfo(Action):
-
-    def name(self):
-        return "send_remove_info"
-
-    def run(self, dispatcher, tracker, domain):
-        print("[SEND REMOVE INFO] time: ", time.time())
-        relName = tracker.get_slot("relName")
-        ws = create_connection("ws://localhost:5002/websockets/endpoint")
-        ws.send("{\"intent\": \"" + tracker.latest_message['intent'].get('name') + "\", \"relName\": \"" + relName + "\"}")
-        result = ws.recv()
+        print("getting the result: ", result)
         ws.close()

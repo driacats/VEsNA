@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bukukh4hltrbr"]
+[gd_scene load_steps=27 format=3 uid="uid://b3tpowrvrgaj3"]
 
 [ext_resource type="Script" path="res://prompter.gd" id="1_eboch"]
 [ext_resource type="ArrayMesh" uid="uid://dkbysmqo1etot" path="res://objects/chair.obj" id="2_m5e1x"]
