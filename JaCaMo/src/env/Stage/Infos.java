@@ -16,14 +16,6 @@ public class Infos{
     public String actorName;
     public String direction;    // direction of the motion
 
-    private String toLowerCamelCase(String pos){
-        if (pos.equals("on"))
-            return pos;
-        pos = pos.split(" ")[0];
-        pos = pos.concat("Of");
-        return pos;
-    }
-
     // Reset all the values to empty string
     public void reset(){
         this.relAddition = false;
@@ -40,59 +32,11 @@ public class Infos{
         this.direction = "";
     }
 
-    // Set values for adding with global positioning
-    public void setGlobalPosition(String objName, String posX, String posY){
-        reset();
-        if (posX.equals(""))
-            posX = "center";
-        if (posY.equals(""))
-            posY = "center";
-        this.globAddition = true;
-        this.objName = objName;
-        this.posX = posX;
-        this.posY = posY;
-    }
-
-    // Set values for adding with relative positioning
-    public void setRelativePosition(String objName, String posRel, String objRel){
-        reset();
-        this.relAddition = true;
-        this.objName = objName;
-        this.posRel = toLowerCamelCase(posRel);
-        this.objRel = objRel;
-    }
-
-    // Set values for removing object
-    public void setRemoval(String objRel){
-        reset();
-        this.removal = true;
-        this.objRel = objRel;
-    }
-
-    public void setMotion(String objRel, String direction){
-        reset();
-        this.motion = true;
-        this.objRel = objRel;
-        this.direction = direction;
-    }
-
-    public String getRequest(){
-        if (this.globAddition)
-            return "/" + this.objName + "/" + this.posX + "/" + this.posY;
-        else if (this.relAddition)
-            return "/" + this.objName + "/" + this.posRel + "/" + this.objRel;
-        else if (this.removal)
-            return "/remove/" + this.objRel;
-        else if (this.motion)
-            return "/move/" + this.objRel + "/" + this.direction;
-        return "ERROR";
-    }
-
     public String buildPayload(){
         String payload = "{";
         payload += "\"relAddition\":  \""   + this.relAddition  + "\",\n";
         payload += "\"globAddition\":  \""  + this.globAddition + "\",\n";
-        payload += "\"actorAddition\":  \""  + this.actorAddition + "\",\n";
+        payload += "\"actorAddition\":  \"" + this.actorAddition + "\",\n";
         payload += "\"removal\":  \""       + this.removal      + "\",\n";
         payload += "\"motion\":  \""        + this.motion       + "\",\n";
         payload += "\"posX\":  \""          + this.posX         + "\",\n";

@@ -45,25 +45,13 @@ stories:
   - action: send_info
   - action: action_reset_all_slots
 
+# TODO: ask for actor name if not provided
 - story: add actor
   steps:
   - intent: add_actor
-  # - slot_was_set:
-  #   - actorName
   - action: utter_add_actor
   - action: send_info
   - action: action_reset_all_slots
-
-# - story: add actor 2
-#   steps:
-#   - intent: add_actor
-#   - slot_was_set:
-#     - actorName: null
-#   - action: utter_ask_name
-#   - intent: actor_name
-#   - action: utter_add_actor
-#   - action: send_info
-#   - action: action_reset_all_slots
 
 - story: remove object
   steps:

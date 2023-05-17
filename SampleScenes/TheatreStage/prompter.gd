@@ -49,16 +49,6 @@ func _process(_delta):
 			elif action == "remove":
 				new_name = remove_object(obj_name)
 			client.put_string(new_name)
-			#if position == null:
-			#	remove_object(obj_name)
-			#	client.put_string(obj_name)
-			#else:
-			#	var new_name
-			#	if obj_name == "actor":
-			#		new_name = add_actor(obj_name, position)
-			#	else:
-			#		new_name = add_object(obj_name, position)
-			#	client.put_string(new_name)
 
 func check_position(position):
 	for child in get_children():

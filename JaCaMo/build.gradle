@@ -41,12 +41,10 @@ dependencies {
 	implementation 'org.apache.curator:curator-x-async:4.0.1'
 	
 
-	implementation 'com.google.code.gson:gson:2.8.5'
+	//// implementation 'com.google.code.gson:gson:2.8.5'
 	
 	implementation 'com.github.eishub:eis:v0.6.2'
 
-    // https://mvnrepository.com/artifact/javax.websocket/javax.websocket-api
-    // compileOnly("javax.websocket:javax.websocket-api:1.1")
     // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
     compileOnly("jakarta.websocket:jakarta.websocket-api:2.1.0")
     // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
@@ -63,7 +61,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
     description 'runs the application'
     group ' JaCaMo'
     main = 'jacamo.infra.JaCaMoLauncher'
-    args 'dial4jaca.jcm'
+    args 'vesna.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 
