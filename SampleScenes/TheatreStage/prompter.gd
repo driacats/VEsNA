@@ -11,7 +11,7 @@ var behind : Vector3 = Vector3(0.0, 0.0, 0.0)
 var front : Vector3 = Vector3(0.0, 0.0, 0.0)
 var obj_counters = {}
 var obj_meshes = {}
-var actor_meshes = {}
+var animation_library = AnimationLibrary.new()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -29,7 +29,7 @@ func _ready():
 	obj_meshes["cube"] = BoxMesh.new()
 	obj_meshes["table"] = load("res://objects/table.obj")
 	obj_meshes["chair"] = load("res://objects/chair.obj")
-	actor_meshes["actor"] = load("res://characters/actor.obj")
+	load_animation_library()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -45,10 +45,28 @@ func _process(_delta):
 			if action == "object":
 				new_name = add_object(obj_name, position)
 			elif action == "actor":
-				new_name = add_actor(obj_name, position)
+				var port = JSON.parse_string(instruction_string)["port"]
+				new_name = add_actor(obj_name, position, port)
 			elif action == "remove":
 				new_name = remove_object(obj_name)
 			client.put_string(new_name)
+		
+func load_animation_library():
+	var animations = DirAccess.open("res://animations")
+	if animations:
+		animations.list_dir_begin()
+		var gltf = animations.get_next()
+		while gltf != "":
+			if gltf.ends_with(".gltf"):
+				var packed_path = animations.get_current_dir() + "/" + gltf
+				var packed = load(packed_path)
+				var body = packed.instantiate()
+				var animation = body.get_node("AnimationPlayer").get_animation("Armature|mixamocom|Layer0").duplicate()
+				for i in range(animation.get_track_count()):
+					var new_path = NodePath(str(animation.track_get_path(i)).replace("Armature/", ""))
+					animation.track_set_path(i, new_path)
+				animation_library.add_animation(gltf.replace(".gltf", ""), animation)
+			gltf = animations.get_next()
 
 func check_position(position):
 	for child in get_children():
@@ -71,9 +89,8 @@ func add_object(obj_name, position):
 	var new_material = PhysicsMaterial.new() # Create a new Physics Material
 	new_material.bounce = 0.3 # Set a certain low value for bounce
 	new_body.set_physics_material_override(new_material) # Set the Physics Material in the RigidBody3D
-	add_child(new_body) # Add the RigidBody to scene
+	get_node("Objects").add_child(new_body) # Add the RigidBody to scene
 	
-	# Add a table start
 	var new_mesh = MeshInstance3D.new() # Create a mesh
 	new_mesh.mesh = obj_meshes[obj_name]
 	new_body.add_child(new_mesh) # Add it to the scene
@@ -85,38 +102,37 @@ func add_object(obj_name, position):
 	new_body.add_child(collision_shape_owner)
 	return new_name
 	
-func add_actor(actor_name, position):
-	print("add_actor")
-	var new_body = RigidBody3D.new()
-	new_body.position = position
-	new_body.mass = 1.0
-	new_body.set_name(actor_name)
+func add_actor(actor_name, position, port):
+	var new_actor = load("res://actor.tscn").instantiate()
+	new_actor.position = position
+	new_actor.name = actor_name
 	
-	var new_material = PhysicsMaterial.new()
-	new_body.set_physics_material_override(new_material)
-	add_child(new_body)
+	var packed_standing_body = load("res://animations/standing.gltf")
+	var packed_standing = packed_standing_body.instantiate()
+	var animation_player = packed_standing.get_node("AnimationPlayer").duplicate()
+	animation_player.add_animation_library("vesna_library", animation_library)
+	animation_player.name = "AnimationPlayer"
+	new_actor.add_child(animation_player)
 	
-	var new_mesh = MeshInstance3D.new()
-	new_mesh.mesh = actor_meshes["actor"]
-	new_body.add_child(new_mesh)
+	var actor_script = load("res://actor.gd")
+	new_actor.set_script(actor_script)
+	print("port: ", port)
+	new_actor.set_meta("port", int(port))
 	
-	var collision_shape = ConvexPolygonShape3D.new()
-	collision_shape.set_points(new_mesh.mesh.get_faces())
-	var collision_shape_owner = CollisionShape3D.new()
-	collision_shape_owner.shape = collision_shape
-	new_body.add_child(collision_shape_owner)
+	get_node("Actors").add_child(new_actor)
+	
 	return actor_name
 	
 # Function that given a name of an object removes it
 # TODO: Add a "all" parameter to empty the scene
 func remove_object(obj_name):
-	if has_node(obj_name):
-		var cube = get_node(obj_name)
-		cube.free()
+	if get_node("Objects").has_node(obj_name):
+		var obj = get_node("Objects").get_node(obj_name)
+		obj.free()
 	return obj_name
 
 func compute_global_position(instruction):
-	var position = Vector3(0.0, 2.0, 0.0)
+	var position = Vector3(0.0, 4.0, 0.0)
 	if instruction["posX"] == "right":
 		position += right
 	elif instruction["posX"] == "left":
@@ -128,7 +144,7 @@ func compute_global_position(instruction):
 	return position
 
 func compute_relative_position(instruction):
-	var position = Vector3(0.0, 2.0, 0.0)
+	var position = Vector3(0.0, 4.0, 0.0)
 	var rel_node = get_node(instruction["objRel"])
 	position += rel_node.position
 	if instruction["posRel"] == "right_of":

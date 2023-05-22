@@ -13,6 +13,7 @@ public class Infos{
     public String posRel;       // relative position (left of, right of, behind of, in front of, on)
     public String objRel;       // relative system object (left of objRel)
     public String objName;      // name of the object to add
+    public int port;
     public String actorName;
     public String direction;    // direction of the motion
 
@@ -28,6 +29,7 @@ public class Infos{
         this.posRel = "";
         this.objRel = "";
         this.objName = "";
+        this.port = -1;
         this.actorName = "";
         this.direction = "";
     }
@@ -44,6 +46,7 @@ public class Infos{
         payload += "\"posRel\":  \""        + this.posRel       + "\",\n";
         payload += "\"objRel\":  \""        + this.objRel       + "\",\n";
         payload += "\"objName\":  \""       + this.objName      + "\",\n";
+        payload += "\"port\":  \""          + this.port         + "\",\n";
         payload += "\"actorName\":  \""     + this.actorName    + "\",\n";
         payload += "\"direction\":  \""     + this.direction    + "\"}";
         return payload;

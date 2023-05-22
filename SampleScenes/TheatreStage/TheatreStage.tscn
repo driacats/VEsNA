@@ -58,9 +58,11 @@ albedo_color = Color(0, 0, 0, 1)
 [sub_resource type="Environment" id="Environment_kctgd"]
 
 [node name="Theatre" type="Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 2.08165e-12)
 script = ExtResource("1_eboch")
 
 [node name="Architecture Env" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0573807, -4.76837e-07, 0.00792313)
 
 [node name="Chairs" type="Node3D" parent="Architecture Env"]
 
@@ -495,3 +497,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_064fj")
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.985958, 0.166992, 0, -0.166992, 0.985958, 0, 2.96261, 11.0493)
 environment = SubResource("Environment_kctgd")
+
+[node name="Objects" type="Node3D" parent="."]
+
+[node name="Actors" type="Node3D" parent="."]

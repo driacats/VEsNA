@@ -23,6 +23,7 @@ mas vesna {
         artifact stage: stage.Stage
         artifact webSocketServer: websocket.WsServer
         artifact client: websocket.WsClient
+        artifact actor: stage.Actor
 	}
 
 }

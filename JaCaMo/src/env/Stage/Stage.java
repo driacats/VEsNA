@@ -75,7 +75,8 @@ public class Stage extends Artifact{
             newInfos.objRel = objInfo.getString("relName");
         if (objInfo.has("actorName") && !objInfo.isNull("actorName"))
             newInfos.actorName = objInfo.getString("actorName");
-        
+        if (objInfo.has("port") && !objInfo.isNull("port"))
+            newInfos.port = objInfo.getInt("port");
         return newInfos;
     }
         
@@ -110,11 +111,12 @@ public class Stage extends Artifact{
     }
 
     @OPERATION
-    void addActor(String actorName, String posX, String posY, OpFeedbackParam<Literal> result){
+    void addActor(String actorName, String posX, String posY, int port, OpFeedbackParam<Literal> result){
         JSONObject JsonInfo = new JSONObject();
         JsonInfo.put("intent", addActorIntentName);
         JsonInfo.put("posX", posX);
         JsonInfo.put("posY", posY);
+        JsonInfo.put("port", port);
         JsonInfo.put("actorName", actorName);
         Infos newInfos = organizeInfo(JsonInfo.toString());
         System.out.println("[STAGE] newInfos: " + newInfos.buildPayload());
