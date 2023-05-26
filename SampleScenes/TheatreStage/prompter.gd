@@ -89,7 +89,6 @@ func add_object(obj_name, position):
 	var new_material = PhysicsMaterial.new() # Create a new Physics Material
 	new_material.bounce = 0.3 # Set a certain low value for bounce
 	new_body.set_physics_material_override(new_material) # Set the Physics Material in the RigidBody3D
-	get_node("Objects").add_child(new_body) # Add the RigidBody to scene
 	
 	var new_mesh = MeshInstance3D.new() # Create a mesh
 	new_mesh.mesh = obj_meshes[obj_name]
@@ -100,6 +99,7 @@ func add_object(obj_name, position):
 	var collision_shape_owner = CollisionShape3D.new()
 	collision_shape_owner.shape = collision_shape
 	new_body.add_child(collision_shape_owner)
+	get_node("Objects").add_child(new_body) # Add the RigidBody to scene
 	return new_name
 	
 func add_actor(actor_name, position, port):
@@ -160,13 +160,13 @@ func compute_relative_position(instruction):
 # Function that given a JSON string containing the instructions for the operation to perform it makes it ready to use for Godot
 func parse_instruction(instruction_string):
 	var instruction = JSON.parse_string(instruction_string)
-	if instruction["globAddition"] == "true":
+	if instruction["globAddition"]:
 		return [instruction["objName"], compute_global_position(instruction), "object"]
-	elif instruction["relAddition"] == "true":
+	elif instruction["relAddition"]:
 		if not has_node(instruction["objRel"]):
 			return "ERROR"
 		return [instruction["objName"], compute_relative_position(instruction), "object"]
-	elif instruction["actorAddition"] == "true":
+	elif instruction["actorAddition"]:
 		if instruction["posX"]:
 			return [instruction["actorName"], compute_global_position(instruction), "actor"]
 		elif instruction["posRel"]:

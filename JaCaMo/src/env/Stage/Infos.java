@@ -1,5 +1,7 @@
 package stage;
 
+import org.json.JSONObject;
+
 public class Infos{
 
     // Fields
@@ -35,20 +37,20 @@ public class Infos{
     }
 
     public String buildPayload(){
-        String payload = "{";
-        payload += "\"relAddition\":  \""   + this.relAddition  + "\",\n";
-        payload += "\"globAddition\":  \""  + this.globAddition + "\",\n";
-        payload += "\"actorAddition\":  \"" + this.actorAddition + "\",\n";
-        payload += "\"removal\":  \""       + this.removal      + "\",\n";
-        payload += "\"motion\":  \""        + this.motion       + "\",\n";
-        payload += "\"posX\":  \""          + this.posX         + "\",\n";
-        payload += "\"posY\":  \""          + this.posY         + "\",\n";
-        payload += "\"posRel\":  \""        + this.posRel       + "\",\n";
-        payload += "\"objRel\":  \""        + this.objRel       + "\",\n";
-        payload += "\"objName\":  \""       + this.objName      + "\",\n";
-        payload += "\"port\":  \""          + this.port         + "\",\n";
-        payload += "\"actorName\":  \""     + this.actorName    + "\",\n";
-        payload += "\"direction\":  \""     + this.direction    + "\"}";
-        return payload;
+        JSONObject payload_json = new JSONObject();
+        payload_json.put("relAddition", this.relAddition);
+        payload_json.put("globAddition", this.globAddition);
+        payload_json.put("actorAddition", this.actorAddition);
+        payload_json.put("removal", this.removal);      
+        payload_json.put("motion", this.motion);       
+        payload_json.put("posX", this.posX);         
+        payload_json.put("posY", this.posY);         
+        payload_json.put("posRel", this.posRel);       
+        payload_json.put("objRel", this.objRel);       
+        payload_json.put("objName", this.objName);      
+        payload_json.put("port", this.port);         
+        payload_json.put("actorName", this.actorName);    
+        payload_json.put("direction", this.direction);
+        return payload_json.toString();
     }
 }
