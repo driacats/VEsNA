@@ -112,14 +112,17 @@ func add_actor(actor_name, position, port):
 	var animation_player = packed_standing.get_node("AnimationPlayer").duplicate()
 	animation_player.add_animation_library("vesna_library", animation_library)
 	animation_player.name = "AnimationPlayer"
+	animation_player.set_physics_process(true);
 	new_actor.add_child(animation_player)
 	
 	var actor_script = load("res://actor.gd")
 	new_actor.set_script(actor_script)
-	print("port: ", port)
 	new_actor.set_meta("port", int(port))
 	
 	get_node("Actors").add_child(new_actor)
+	
+	#get_node("RootMotionView/AnimationTree").anim_player = get_node("Actors").get_node(actor_name).get_node("AnimationPlayer").get_path()
+	#get_node("RootMotionView/AnimationTree").active = true
 	
 	return actor_name
 	
@@ -132,7 +135,7 @@ func remove_object(obj_name):
 	return obj_name
 
 func compute_global_position(instruction):
-	var position = Vector3(0.0, 4.0, 0.0)
+	var position = Vector3(0.0, 1.5, 0.0)
 	if instruction["posX"] == "right":
 		position += right
 	elif instruction["posX"] == "left":
@@ -144,7 +147,7 @@ func compute_global_position(instruction):
 	return position
 
 func compute_relative_position(instruction):
-	var position = Vector3(0.0, 4.0, 0.0)
+	var position = Vector3(0.0, 1.5, 0.0)
 	var rel_node = get_node(instruction["objRel"])
 	position += rel_node.position
 	if instruction["posRel"] == "right_of":

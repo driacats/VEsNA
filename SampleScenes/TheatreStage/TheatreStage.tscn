@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://b3tpowrvrgaj3"]
+[gd_scene load_steps=28 format=3 uid="uid://b3tpowrvrgaj3"]
 
 [ext_resource type="Script" path="res://prompter.gd" id="1_eboch"]
 [ext_resource type="ArrayMesh" uid="uid://dkbysmqo1etot" path="res://objects/chair.obj" id="2_m5e1x"]
@@ -56,6 +56,9 @@ albedo_color = Color(0.65098, 0.482353, 0.356863, 1)
 albedo_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Environment" id="Environment_kctgd"]
+
+[sub_resource type="AnimationRootNode" id="AnimationRootNode_wbm1v"]
+resource_local_to_scene = true
 
 [node name="Theatre" type="Node3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 2.08165e-12, 2.08165e-12)
@@ -501,3 +504,8 @@ environment = SubResource("Environment_kctgd")
 [node name="Objects" type="Node3D" parent="."]
 
 [node name="Actors" type="Node3D" parent="."]
+
+[node name="RootMotionView" type="RootMotionView" parent="."]
+
+[node name="AnimationTree" type="AnimationTree" parent="RootMotionView"]
+tree_root = SubResource("AnimationRootNode_wbm1v")
