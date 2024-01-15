@@ -9,6 +9,12 @@ import cartago.OPERATION;
 import cartago.OpFeedbackParam;
 import websocket.WsClient;
 
+// Websockets
+import javax.websocket.ContainerProvider;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+import java.net.URI;
+
 // Java Sets
 import java.util.Arrays; 
 import java.util.Set;
@@ -27,15 +33,27 @@ public class Stage extends Artifact{
     Set<String> relatives = new HashSet<>(Arrays.asList("left of", "right of", "front of", "behind of", "on"));
     Infos infos = new Infos();
 
+    // WsClient client;
+
+    // public Stage() throws Exception{
+        // System.out.println("Ci siamo");
+        // client = new WsClient();
+        // System.out.println("Ancora");
+        // client.startConnection(address, port);
+        // System.out.println("[STAGE] Connection on 127.0.0.1:9080");
+    // }
+
     public String sendRequest(Infos newInfos) throws Exception {
         String payload = newInfos.buildPayload();
-        System.out.println("[STAGE] Connection on 127.0.0.1:9080");
+        System.out.println("[STAGE] Payload: " + payload);
         WsClient client = new WsClient();
         client.startConnection(address, port);
         StringBuilder answer = new StringBuilder(client.sendMessage(payload));
+        // client.sendMessage(payload);
         System.out.println("[STAGE] Get Answer: " + answer.toString());
         client.stopConnection();
         return answer.toString();
+        // return "Sent";
     }
 
     Infos organizeInfo(String infos){

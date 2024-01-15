@@ -3,6 +3,8 @@ extends Node
 const PORT : int = 9080
 const ADDRESS : String = "127.0.0.1"
 var server = TCPServer.new()
+#var socket = WebSocketPeer.new()
+var client
 var cube_counter : int = 0
 var center : Vector3 = Vector3(0.0, 0.0, 0.0)
 var left : Vector3 = Vector3(0.0, 0.0, 0.0)
@@ -16,8 +18,11 @@ var animation_library = AnimationLibrary.new()
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	server.listen(PORT, ADDRESS) # Make the server start
+	#socket.connect_to_url(ADDRESS + ":" + str(PORT))
+	
 	
 	if has_node("StageStructure/Stage/Stage"):
+		# compute the positions that will be used in the future
 		var stage = get_node("StageStructure/Stage/Stage")
 		center = stage.position
 		var dims = stage.scale
@@ -25,32 +30,38 @@ func _ready():
 		right[0] = center[0] + dims[0] / 4
 		behind[2] = center[2] - dims[2] / 4
 		front[2] = center[2] + dims[2] / 4
-		
-	obj_meshes["cube"] = BoxMesh.new()
-	obj_meshes["table"] = load("res://objects/table.obj")
-	obj_meshes["chair"] = load("res://objects/chair.obj")
+	
+	load_obj_meshes()
 	load_animation_library()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
+	#pass
 	if server.is_connection_available(): # If there is a client connected
-		var client = server.take_connection() # Take the connection
-		if client.get_available_bytes() > 0: # If a message is sent
-			var instruction_string = str(client.get_string(client.get_available_bytes())) # Get the instruction string from the client
-			var instruction = parse_instruction(instruction_string) # From JSON string to Vector3 position
-			var obj_name = instruction[0]
-			var position = instruction[1]
-			var action = instruction[2]
-			var new_name
-			if action == "object":
-				new_name = add_object(obj_name, position)
-			elif action == "actor":
-				var port = JSON.parse_string(instruction_string)["port"]
-				new_name = add_actor(obj_name, position, port)
-			elif action == "remove":
-				new_name = remove_object(obj_name)
-			client.put_string(new_name)
-		
+		print("Got connection!")
+		client = server.take_connection() # Take the connection
+	if client and client.get_available_bytes() > 0: # If a message is sent
+		var instruction_string = str(client.get_string(client.get_available_bytes())) # Get the instruction string from the client
+		var instruction = parse_instruction(instruction_string) # From JSON string to Vector3 position
+		var obj_name = instruction[0]
+		var position = instruction[1]
+		var action = instruction[2]
+		var new_name
+		if action == "object":
+			new_name = add_object(obj_name, position)
+			#print("Sending answer")
+			#client.put_string(new_name + str(position))
+		elif action == "actor":
+			var port = JSON.parse_string(instruction_string)["port"]
+			new_name = add_actor(obj_name, position, port)
+			#print("Sending message back")
+			#client.put_string(new_name + str(position))
+		elif action == "remove":
+			new_name = remove_object(obj_name)
+			#client.put_string(new_name)
+		print("Sending message back")
+		client.put_string(new_name)
+	
 func load_animation_library():
 	var animations = DirAccess.open("res://animations")
 	if animations:
@@ -67,6 +78,11 @@ func load_animation_library():
 					animation.track_set_path(i, new_path)
 				animation_library.add_animation(gltf.replace(".gltf", ""), animation)
 			gltf = animations.get_next()
+
+func load_obj_meshes():
+	obj_meshes["cube"] = BoxMesh.new()
+	obj_meshes["table"] = load("res://objects/table.obj")
+	obj_meshes["chair"] = load("res://objects/chair.obj")
 
 func check_position(position):
 	for child in get_children():
@@ -121,9 +137,6 @@ func add_actor(actor_name, position, port):
 	
 	get_node("Actors").add_child(new_actor)
 	
-	#get_node("RootMotionView/AnimationTree").anim_player = get_node("Actors").get_node(actor_name).get_node("AnimationPlayer").get_path()
-	#get_node("RootMotionView/AnimationTree").active = true
-	
 	return actor_name
 	
 # Function that given a name of an object removes it
@@ -174,6 +187,6 @@ func parse_instruction(instruction_string):
 			return [instruction["actorName"], compute_global_position(instruction), "actor"]
 		elif instruction["posRel"]:
 			return [instruction["actorName"], compute_relative_position(instruction), "actor"]
-	elif instruction["removal"] == "true":
+	elif instruction["removal"]:
 		return [instruction["objRel"], null, "remove"]
 	

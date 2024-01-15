@@ -68,7 +68,7 @@ class ControllerPolicy(Policy):
 			# We send it to the monitor and wait for the answer.
 			message = "{"
 			message += "\"sender\": \"bot\", \"receiver\": \"user\","
-			message += "\"next_action\": \"" + str(tracker.latest_action_name) + "\"}"
+			message += "\"latest_action\": \"" + str(tracker.latest_action_name) + "\"}"
 			ws.send(message.replace("\'", "\""))
 			oracle = ws.recv()
 			ws.close()

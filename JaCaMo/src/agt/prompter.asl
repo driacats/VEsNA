@@ -48,8 +48,11 @@
 +instruction(add_actor, ObjName, PosX, PosY, PosRel, ObjRel, Direction, ActorName)
     : port_ticket(nobody, Port)// & not actor(ActorName, _, _)
     <- .print("Intent add actor");
+        .print(ActorName);
         addActor(ActorName, PosX, PosY, Port, Result);
+        .print("Creating actor");
         .create_agent(ActorName, "actor.asl");
+        .print("Created");
         .send(ActorName, tell, position(PosX, PosY));
         .send(ActorName, tell, port(Port));
         -port_ticket(nobody, Port);

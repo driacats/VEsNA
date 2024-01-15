@@ -60,7 +60,7 @@ manage_event(WebSocket) :-
              (may_halt(TE2) ->
                (writeln('verdict = ?_True'), Reply=(_{}.put(E).put(_{verdict:currently_true}))); % Verdict = ?_True
                (writeln('verdict = ?_False'), Reply=(_{}.put(E).put(_{verdict:currently_false})))))); % Verdict = ?_False
-           (nb_setval(state, 0), writeln('verdict = False'), term_string(TE1, TE1Str), Reply=(_{}.put(E).put(_{verdict:false, spec:TE1Str})))), % Verdict = False
+           (writeln('verdict = False'), term_string(TE1, TE1Str), Reply=(_{}.put(E).put(_{verdict:false, spec:TE1Str})))), % Verdict = False
          atom_json_dict(Json,Reply,[as(string)]),
 	       ws_send(WebSocket, string(Json)),
 	       manage_event(WebSocket)).

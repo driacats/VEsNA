@@ -13,15 +13,23 @@ public class WsClient extends Artifact{
     private BufferedReader in;      // Input channel
 
     public void startConnection(String ip, int port) throws Exception{
-        clientSocket = new Socket(ip, port); // connect to the given ip on the given port
-        out = new PrintWriter(clientSocket.getOutputStream(), true); // open the output channel
-        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // open the input channel
+        // try{
+            clientSocket = new Socket(ip, port); // connect to the given ip on the given port
+            // clientSocket.setKeepAlive(true);
+            out = new PrintWriter(clientSocket.getOutputStream(), true); // open the output channel
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())); // open the input channel
+        // }catch(Exception e){
+        //     System.out.println(e);
+        // }
     }
 
     public String sendMessage(String msg) throws Exception {
         out.println(msg); // use the output channel to send the message
-        String resp = in.readLine(); // read the message from server
-        return resp;
+        System.out.println("Sending message");
+        // String resp = in.readLine(); // read the message from server
+        System.out.println("Answer message");
+        // return resp;
+        return "Sent";
     }
 
     public void stopConnection() throws Exception{

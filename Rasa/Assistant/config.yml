@@ -32,6 +32,6 @@ policies:
   batch_size:
   - 32
   - 64
-#- name: policies.controllerPolicy.ControllerPolicy
-#  priority: 6
-#  error_action: "utter_error_message"
+# - name: policies.controllerPolicy.ControllerPolicy
+#   priority: 6
+#   error_action: "utter_error_message"

@@ -97,7 +97,7 @@ responses:
   - text: "Add actor intent here, received: {actorName}"
 
   utter_error_message:
-  - text: "You cannot say `bot` inside a sentence!"
+  - text: "Error!"
 
   utter_ask_name:
   - text: "What is the actor name?"
