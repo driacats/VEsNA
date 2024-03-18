@@ -1,100 +1,51 @@
 extends CharacterBody3D
 
-const ADDRESS : String = "127.0.0.1"
-var server = TCPServer.new()
-var view_cone
-var objects = {}
+# The port we will listen to
+const PORT = 9080
+# Our WebSocketServer instance
+var _server = WebSocketServer.new()
 
-var move_flag = false
-var move_instruction = {}
-
-@export var speed = 7
-@export var fall_acceleration = 50
-var target_velocity = Vector3.ZERO
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	# var PORT = get_meta("port")
-	var PORT = 8080
-	server.listen(PORT, ADDRESS) # Make the server start
-	view_cone = get_node("Rig").get_node("Skeleton3D").get_node("Rogue_Head_Hooded").get_node("Area3D")
+	# Connect base signals to get notified of new client connections,
+	# disconnections, and disconnect requests.
+	_server.client_connected.connect(_connected)
+	_server.client_disconnected.connect(_disconnected)
+	_server.client_close_request.connect(_close_request)
+	# This signal is emitted when not using the Multiplayer API every time a
+	# full packet is received.
+	# Alternatively, you could check get_peer(PEER_ID).get_available_packets()
+	# in a loop for each connected peer.
+	_server.data_received.connect(_on_data)
+	# Start listening on the given port.
+	var err = _server.listen(PORT)
+	if err != OK:
+		print("Unable to start server")
+		set_process(false)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _connected(id, proto):
+	# This is called when a new peer connects, "id" will be the assigned peer id,
+	# "proto" will be the selected WebSocket sub-protocol (which is optional)
+	print("Client %d connected with protocol: %s" % [id, proto])
+
+func _close_request(id, code, reason):
+	# This is called when a client notifies that it wishes to close the connection,
+	# providing a reason string and close code.
+	print("Client %d disconnecting with code: %d, reason: %s" % [id, code, reason])
+
+func _disconnected(id, was_clean = false):
+	# This is called when a client disconnects, "id" will be the one of the
+	# disconnecting client, "was_clean" will tell you if the disconnection
+	# was correctly notified by the remote peer before closing the socket.
+	print("Client %d disconnected, clean: %s" % [id, str(was_clean)])
+
+func _on_data(id):
+	# Print the received packet, you MUST always use get_peer(id).get_packet to receive data,
+	# and not get_packet directly when not using the MultiplayerAPI.
+	var pkt = _server.get_peer(id).get_packet()
+	print("Got data from client %d: %s ... echoing" % [id, pkt.get_string_from_utf8()])
+	_server.get_peer(id).put_packet(pkt)
+
 func _process(delta):
-	if not get_node("AnimationPlayer").is_playing():
-		get_node("AnimationPlayer").play("Idle")
-	if server.is_connection_available(): # If there is a client connected
-		var client = server.take_connection() # Take the connection
-		if client.get_available_bytes() > 0: # If a message is sent
-			var instruction_string = str(client.get_string(client.get_available_bytes())) # Get the instruction string from the client
-			var instruction = JSON.parse_string(instruction_string)
-			var answer = analyze_instruction(instruction)
-			client.put_string(answer)
-	
-func _physics_process(delta):
-	var direction = Vector3.ZERO
-	
-	if move_flag and move_instruction["direction"] == "forward":
-		direction.z = direction.z + 1
-	if move_flag and move_instruction["direction"] == "back":
-		direction.z = direction.z - 1
-	if move_flag and move_instruction["direction"] == "right":
-		direction.x = direction.x + 1
-	if move_flag and move_instruction["direction"] == "left":
-		direction.x = direction.x - 1
-	
-	if direction != Vector3.ZERO:
-		direction = direction.normalized()
-		look_at(position - direction, Vector3.UP)
-		$AnimationPlayer.speed_scale = 0.5
-		$AnimationPlayer.play("vesna_library/walk")
-	else:
-		$AnimationPlayer.speed_scale = 1
-		
-	target_velocity.x = direction.x * speed
-	target_velocity.z = direction.z * speed
-	
-	if not is_on_floor():
-		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
-		
-	velocity = target_velocity
-	move_and_slide()
-	see()
-	#if move_flag and position.z - move_instruction["original_position"].z > 2:
-	if move_flag and position.distance_to(move_instruction["original_position"]) > 2:
-		move_flag = false
-		$AnimationPlayer.stop()
-				
-func see():
-	var objects_in_sight = view_cone.get_overlapping_bodies()
-	for obj in objects_in_sight:
-		var parent = obj.get_parent()
-		if parent.name == "Furniture":
-			if obj.name not in objects:
-				objects[obj.name] = obj.position
-			elif obj.position != objects[obj.name]:
-				objects[obj.name] = obj.position
-	
-func analyze_instruction(instruction):
-	if instruction["type"] == "perform":
-		return perform_action(instruction)
-	elif instruction["type"] == "request":
-		return answer_request(instruction)
-	return "No action available"
-		
-func perform_action(instruction):
-	if instruction["action"] == "lookaround":
-		play_animation(instruction["action"])
-	elif instruction["action"] == "move":
-		move_instruction["direction"] = instruction["direction"]
-		#move_instruction["direction"] = "move_forward"
-		move_instruction["original_position"] = position
-		move_flag = true
-	return "Done!"
-
-func answer_request(instruction):
-	if instruction["request"] == "eyes":
-		return JSON.stringify(objects)
-
-func play_animation(animation_name):
-	get_node("AnimationPlayer").play("vesna_library/" + animation_name)
+	# Call this in _process or _physics_process.
+	# Data transfer, and signals emission will only happen when calling this function.
+	_server.poll()
