@@ -1,51 +1,54 @@
 extends CharacterBody3D
 
-# The port we will listen to
+# The port we will listen to.
 const PORT = 9080
-# Our WebSocketServer instance
-var _server = WebSocketServer.new()
+var tcp_server := TCPServer.new()
+var socket := WebSocketPeer.new()
+
+var move_flag = false
+
+
+func log_message(message):
+	print(Time.get_time_string_from_system() + " " + message)
+
 
 func _ready():
-	# Connect base signals to get notified of new client connections,
-	# disconnections, and disconnect requests.
-	_server.client_connected.connect(_connected)
-	_server.client_disconnected.connect(_disconnected)
-	_server.client_close_request.connect(_close_request)
-	# This signal is emitted when not using the Multiplayer API every time a
-	# full packet is received.
-	# Alternatively, you could check get_peer(PEER_ID).get_available_packets()
-	# in a loop for each connected peer.
-	_server.data_received.connect(_on_data)
-	# Start listening on the given port.
-	var err = _server.listen(PORT)
-	if err != OK:
-		print("Unable to start server")
+	if tcp_server.listen(PORT) != OK:
+		log_message("Unable to start server.")
 		set_process(false)
 
-func _connected(id, proto):
-	# This is called when a new peer connects, "id" will be the assigned peer id,
-	# "proto" will be the selected WebSocket sub-protocol (which is optional)
-	print("Client %d connected with protocol: %s" % [id, proto])
 
-func _close_request(id, code, reason):
-	# This is called when a client notifies that it wishes to close the connection,
-	# providing a reason string and close code.
-	print("Client %d disconnecting with code: %d, reason: %s" % [id, code, reason])
+func _process(_delta):
+	while tcp_server.is_connection_available():
+		var conn: StreamPeerTCP = tcp_server.take_connection()
+		assert(conn != null)
+		socket.accept_stream(conn)
 
-func _disconnected(id, was_clean = false):
-	# This is called when a client disconnects, "id" will be the one of the
-	# disconnecting client, "was_clean" will tell you if the disconnection
-	# was correctly notified by the remote peer before closing the socket.
-	print("Client %d disconnected, clean: %s" % [id, str(was_clean)])
+	socket.poll()
 
-func _on_data(id):
-	# Print the received packet, you MUST always use get_peer(id).get_packet to receive data,
-	# and not get_packet directly when not using the MultiplayerAPI.
-	var pkt = _server.get_peer(id).get_packet()
-	print("Got data from client %d: %s ... echoing" % [id, pkt.get_string_from_utf8()])
-	_server.get_peer(id).put_packet(pkt)
+	if socket.get_ready_state() == WebSocketPeer.STATE_OPEN:
+		while socket.get_available_packet_count():
+			var msg = socket.get_packet().get_string_from_ascii()
+			log_message(msg)
+			var idea = JSON.parse_string(msg)
+			manage(idea)
 
-func _process(delta):
-	# Call this in _process or _physics_process.
-	# Data transfer, and signals emission will only happen when calling this function.
-	_server.poll()
+
+func _exit_tree():
+	socket.close()
+	tcp_server.stop()
+
+
+func _on_button_pong_pressed():
+	socket.send_text("Pong")
+
+func manage(idea):
+	if idea["action"] == "lookaround":
+		# play_animation(idea["action"])
+		pass
+	elif idea["action"] == "move":
+		var direction = idea["direction"]
+		#move_instruction["direction"] = "move_forward"
+		var original_position = position
+		move_flag = true
+	return "Done!"
