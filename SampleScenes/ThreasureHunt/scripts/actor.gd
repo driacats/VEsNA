@@ -43,12 +43,4 @@ func _on_button_pong_pressed():
 	socket.send_text("Pong")
 
 func manage(idea):
-	if idea["action"] == "lookaround":
-		# play_animation(idea["action"])
-		pass
-	elif idea["action"] == "move":
-		var direction = idea["direction"]
-		#move_instruction["direction"] = "move_forward"
-		var original_position = position
-		move_flag = true
-	return "Done!"
+	print(idea)
