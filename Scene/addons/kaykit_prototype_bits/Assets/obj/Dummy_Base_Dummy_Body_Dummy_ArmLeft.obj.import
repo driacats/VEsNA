@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://g76a73i0a4kg"
+path="res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_ArmLeft.obj-4eead44bf77f6117ca4c2c0656db901f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_ArmLeft.obj-4eead44bf77f6117ca4c2c0656db901f.mesh"]
+
+source_file="res://addons/kaykit_prototype_bits/Assets/obj/Dummy_Base_Dummy_Body_Dummy_ArmLeft.obj"
+dest_files=["res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_ArmLeft.obj-4eead44bf77f6117ca4c2c0656db901f.mesh", "res://.godot/imported/Dummy_Base_Dummy_Body_Dummy_ArmLeft.obj-4eead44bf77f6117ca4c2c0656db901f.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

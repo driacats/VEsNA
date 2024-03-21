@@ -1,5 +1,0 @@
- - user_right.txt: l'utente ha fatto le operazioni di aggiunta nel modo corretto aggiungendo un solo oggetto per ogni posizione disponibile;
- - user_wrong.txt: l'utente tenta di inserire un oggetto dove ne è già presente uno;
- - bot_right.txt: tutte le operazioni vengono eseguite correttamente e con le reference corrette;
- - bot_wrong.txt: il bot lascia passare un messaggio che chiede di aggiungere un oggetto con riferimento ad un altro che non esiste in scena perché non è ancora stato aggiunto nessun oggetto di quel tipo;
- - confidence_wrong.txt: l'entity `vertical` viene estratta con una confidence di 0.6, troppo bassa per andare avanti (e sbagliata, per altro).

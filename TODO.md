@@ -1,3 +1,0 @@
- - [ ] Usare websocket sulla classe con costruttore: la connessione deve rimanere attiva, un thread a parte ascolta solo
- - [ ] Mandare sia oggetti visti sia range visitato con minimo e massimo (ma con epsilon di errore)
- - [ ] Gestire occlusioni e sconosciuto dietro oggetti

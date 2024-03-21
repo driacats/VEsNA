@@ -1,6 +1,0 @@
-{"sender": "user", "receiver": "bot", "text": "Add a table front of table0", "intent": {"name": "add_relative_object", "confidence": 0.3}, "slots": {"object": "table", "vertical": "front of", "horizontal": "None", "relative": "None", "relName": "table0", "session_started_metadata": "None"}, "latest_action_name": "action_listen"}
-{"sender": "bot", "receiver": "user", "next_action": "utter_add_relative_object"}
-{"sender": "bot", "receiver": "user", "next_action": "send_relative_info"}
-{"sender": "bot", "receiver": "user", "next_action": "action_reset_all_slots"}
-
-
