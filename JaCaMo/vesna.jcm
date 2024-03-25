@@ -1,5 +1,5 @@
 /*
-    Dial4JaCa
+    VEsNA
     ---------------------------
 
     JaCaMo Application File
@@ -14,17 +14,14 @@
 
 mas vesna {
 
-    agent prompter:prompter.asl{
-        focus: webSocketServer, client, stage
+    agent actor:actor.asl{
+        // focus: wp.actor
         goals: start
     }
     
-	workspace wp{
-        artifact stage: stage.Stage
-        artifact webSocketServer: websocket.WsServer
-        artifact client: websocket.WsClient
-        artifact actor: stage.Actor
-	}
+	// workspace wp{
+    //     artifact actor: stage.Actor
+	// }
 
 }
 

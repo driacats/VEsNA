@@ -128,19 +128,10 @@ dependencies {
 	
 	implementation 'com.github.eishub:eis:v0.6.2'
 
-    // https://mvnrepository.com/artifact/jakarta.websocket/jakarta.websocket-api
-    compileOnly("jakarta.websocket:jakarta.websocket-api:2.1.0")
-    // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-server
-    implementation("org.glassfish.tyrus:tyrus-server:2.1.3")
-    // https://mvnrepository.com/artifact/org.glassfish.tyrus/tyrus-container-grizzly-server
-    implementation("org.glassfish.tyrus:tyrus-container-grizzly-server:2.1.3")
+    // https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
+    implementation group: 'org.java-websocket', name: 'Java-WebSocket', version: '1.5.6'
     // https://mvnrepository.com/artifact/org.json/json
     implementation("org.json:json:20230227")
-    // https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket
-    // implementation 'org.java-websocket:Java-WebSocket:1.5.3'
-
-    implementation 'javax.websocket:javax.websocket-api:1.1'
-    implementation 'org.glassfish.tyrus:tyrus-client:1.17'
 
 
 }

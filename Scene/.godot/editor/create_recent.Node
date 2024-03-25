@@ -1,0 +1,4 @@
+StaticBody3D
+RayCast3D
+CollisionShape3D
+Area3D
