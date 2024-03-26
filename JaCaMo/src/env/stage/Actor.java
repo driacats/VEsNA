@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import cartago.Artifact;
 import cartago.OPERATION;
 import cartago.OpFeedbackParam;
+// import cartago.*;
 import jason.asSyntax.Literal;
 
 import java.util.List;
@@ -15,29 +16,39 @@ import stage.websocket.WsClient;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class Actor extends Artifact{
+import stage.websocket.WsClientMsgHandler;
 
-    // private WsClient client = new WsClient();
+public class Actor extends Artifact implements WsClientMsgHandler{
+
     private int port = 9080;
     private String host = "localhost";
     private WsClient conn;
 
-    public Actor() throws URISyntaxException {
-
-		// WsServer server = new WsServer(new InetSocketAddress(host, port));
-		// server.run();
+    // public Actor() throws URISyntaxException {
+    //     conn = new WsClient(new URI("ws://localhost:9080"));
+    //     conn.setMsgHandler(this::handleMsg);
+    //     conn.connect();
+    //     defineObsProperty("sight", "none");
+	// }
+    
+    @OPERATION
+    public void init() throws URISyntaxException {
         conn = new WsClient(new URI("ws://localhost:9080"));
+        conn.setMsgHandler(this::handleMsg);
         conn.connect();
+        defineObsProperty("sight", "none");
+        defineObsProperty("distance", "none");
 	}
+
 
     private void send(JSONObject json){
         conn.send(json.toString());
-        System.out.println("[ACTOR] Message sent");
+        // System.out.println("[actor] Message sent");
     }
 
     @OPERATION
     public void act(){
-        System.out.println("[ACTOR] Sending message");
+        System.out.println("[actor] Sending message");
         JSONObject json = new JSONObject();
         json.put("action", "connection_start");
         send(json);
@@ -60,120 +71,29 @@ public class Actor extends Artifact{
         send(json);
     }
      
-    // public Actor(){
-    //     try{
-    //         client.startConnection("127.0.0.1", port);
-    //         System.out.println("[ACTOR] Client initialized.");
-    //         StringBuilder answer = new StringBuilder(client.sendMessage("Hello from the actor"));
-    //     } catch(Exception e){
-    //         System.out.println("[ACTOR] " + e);
-    //     }
-    // }
-// 
-    // private String send(JSONObject msg){
-    //     StringBuilder  answer = new StringBuilder("Error.");
-    //     try{
-    //         answer = new StringBuilder(client.sendMessage(msg.toString()));
-    //     } catch(Exception e){
-    //         System.out.println("[ACTOR] " + e);
-    //     }
-    //     return answer.toString();
-    // }
-    // // The actor class connects the actor mind with its body.
-    // // It has two main methods:
-    // // - perform: asks the body to perform an action;
-    // // - request: asks the body a kwnoledge.
-// 
-    // // //! ATTENTION: perform is for in place operations. In order to move use the move function.
-    // // @OPERATION
-    // // public void perform(String action, int port, OpFeedbackParam<Literal> result){
-    // //     // The function takes as parameters:
-    // //     // - the action to be performed;
-    // //     // - the port to contact the body;
-    // //     // - the feedback parameter for the output.
-// 
-    // //     // We declare a new JSON object in which we add:
-    // //     // - the type of the message
-    // //     // - the action
-    // //     JSONObject action_json = new JSONObject();
-    // //     action_json.put("type", "perform");
-    // //     action_json.put("action", action.toString());
-    //     
-    // //     // We send it to the actor body and get the result.
-    // //     WsClient client = new WsClient();
-    // //     try{
-    // //         client.startConnection("127.0.0.1", port);
-    // //         StringBuilder answer = new StringBuilder(client.sendMessage(action_json.toString()));
-    // //         System.out.println("[ACTOR] Get Answer: " + answer.toString());
-    // //         client.stopConnection();
-    // //     }catch(Exception e){
-    // //         System.out.println(e);
-    // //     }
-    // // }
-// 
-    // @OPERATION
-    // public void act(String type, int port, JSONObject action, OpFeedbackParam<Literal> result){
-    //     JSONObject action_json = new JSONObject();
-    //     action_json.put("type", type);
-    //     action_json.put("action", action);
-    //     String answer = send(action_json);
-    //     System.out.println("[ACTOR] Answer: " + answer);
-    // }
-// 
-    // @OPERATION
-    // public void move(String direction, int port, OpFeedbackParam<Literal> result){
-    //     JSONObject action_json = new JSONObject();
-    //     action_json.put("type", "perform");
-    //     action_json.put("action", "move");
-    //     action_json.put("direction", direction);
-// 
-    //     WsClient client = new WsClient();
-    //     try{
-    //         client.startConnection("127.0.0.1", port);
-    //         StringBuilder answer = new StringBuilder(client.sendMessage(action_json.toString()));
-    //         System.out.println("[ACTOR] Get Answer: " + answer.toString());
-    //         client.stopConnection();
-    //     }catch(Exception e){
-    //         System.out.println(e);
-    //     }
-    // }
-// 
-    // @OPERATION
-    // public void request(String datum, int port, OpFeedbackParam<Literal[]> result){
-    //     // The function takes as parameters:
-    //     // - the datum we want to know;
-    //     // - the port to contact the body;
-    //     // - the feedback parameter for the output (as list).
-// 
-    //     // We declare a new JSON object in which we add:
-    //     // - the type of the message
-    //     // - the request
-    //     JSONObject request_json = new JSONObject();
-    //     request_json.put("type", "request");
-    //     request_json.put("request", "eyes");
-// 
-    //     // We send it to the actor body and get the result.
-    //     WsClient client = new WsClient();
-    //     try{
-    //         client.startConnection("127.0.0.1", port);
-    //         StringBuilder answer = new StringBuilder(client.sendMessage(request_json.toString()));
-    //         System.out.println("[ACTOR] Get Answer: " + answer.toString());
-    //         JSONObject answer_json = new JSONObject(answer.toString().replaceAll("\\P{Print}", "").substring(1));
-    //         List<Literal> raw_result = new ArrayList<Literal>();
-    //         answer_json.keySet().forEach(keyStr ->
-    //             {
-    //                 String item = keyStr + answer_json.getString(keyStr);
-    //                 raw_result.add(Literal.parseLiteral(item));
-    //             }
-    //         );
-    //         System.out.println(raw_result.toString());
-    //         Literal[] raw_result_array = new Literal[raw_result.size()];
-    //         raw_result.toArray(raw_result_array);
-    //         result.set(raw_result_array);
-    //         client.stopConnection();
-    //     }catch(Exception e){
-    //         System.out.println(e);
-    //     }
-    // }
-    
+    @Override
+    public void handleMsg(String msg){
+        // System.out.println("[actor] received " + msg);
+        JSONObject json = new JSONObject(msg);
+        if (json.getString("perception").equals("sight")){
+            JSONObject data = json.getJSONObject("data");
+            String object = data.getString("object");
+            // System.out.println("[actor] DEBUG: I saw " + object);
+            float distance = Float.parseFloat(data.getString("distance"));
+            if (distance < 3.5)
+                getObsProperty("distance").updateValue(Literal.parseLiteral("touch"));
+            else if (distance < 5.0)
+                getObsProperty("distance").updateValue(Literal.parseLiteral("near"));
+            else if (distance < 8.0)
+                getObsProperty("distance").updateValue(Literal.parseLiteral("medium"));
+            else
+                getObsProperty("distance").updateValue(Literal.parseLiteral("far"));
+
+            if (object.toLowerCase().contains("wall"))
+                getObsProperty("sight").updateValue(Literal.parseLiteral("wall"));
+            else
+                getObsProperty("sight").updateValue(Literal.parseLiteral(object));
+
+        }
+    }
 }

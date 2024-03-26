@@ -9,7 +9,11 @@ import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
+import stage.websocket.WsClientMsgHandler;
+
 public class WsClient extends WebSocketClient {
+
+	private WsClientMsgHandler msgHandler;
 
 	public WsClient(URI serverUri, Draft draft) {
 		super(serverUri, draft);
@@ -17,6 +21,10 @@ public class WsClient extends WebSocketClient {
 
 	public WsClient(URI serverURI) {
 		super(serverURI);
+	}
+
+	public void setMsgHandler(WsClientMsgHandler handler){
+		this.msgHandler = handler;
 	}
 
 	@Override
@@ -32,7 +40,10 @@ public class WsClient extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		System.out.println("received message: " + message);
+		// System.out.println("received message: " + message);
+		if (msgHandler != null){
+			msgHandler.handleMsg(message);
+		}
 	}
 
 	@Override

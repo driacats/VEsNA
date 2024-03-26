@@ -1,3 +1,2 @@
 res://main.tscn
 res://scripts/actor.gd
-res://scripts/websocket/WebSocketServer.gd
