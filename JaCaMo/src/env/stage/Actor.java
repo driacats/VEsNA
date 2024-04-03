@@ -38,6 +38,7 @@ public class Actor extends Artifact implements WsClientMsgHandler{
         conn.connect();
         defineObsProperty("sight", "none");
         defineObsProperty("distance", "none");
+        defineObsProperty("veRotation", "up");
 	}
 
 
@@ -73,11 +74,35 @@ public class Actor extends Artifact implements WsClientMsgHandler{
      
     @Override
     public void handleMsg(String msg){
-        // System.out.println("[actor] received " + msg);
+        System.out.println("[actor] received " + msg);
         JSONObject json = new JSONObject(msg);
         if (json.getString("perception").equals("sight")){
             JSONObject data = json.getJSONObject("data");
             String object = data.getString("object");
+            
+            String rotationStr = data.getString("rotation");
+            String[] stringValues = rotationStr.substring(1, rotationStr.length() - 1).split(",\\s*");
+        
+            // Converti le stringhe in numeri float
+            float[] rotation = new float[stringValues.length];
+            for (int i = 0; i < stringValues.length; i++) {
+                rotation[i] = Float.parseFloat(stringValues[i]);
+            }
+            String rotLit = "";
+             if (rotation[1] < 4.0)
+                rotLit = "down";
+            if (rotation[1] < 2.0)
+                rotLit = "left";
+            if (rotation[1] < 1.0)
+                rotLit = "up";
+            if (rotation[1] < 0.0)
+                rotLit = "right";
+            // else
+            //     rotLit = "invalid";
+            // else
+            //     rotLit = "invalid";
+            getObsProperty("veRotation").updateValue(Literal.parseLiteral(rotLit));
+
             // System.out.println("[actor] DEBUG: I saw " + object);
             float distance = Float.parseFloat(data.getString("distance"));
             if (distance < 3.5)
@@ -93,7 +118,29 @@ public class Actor extends Artifact implements WsClientMsgHandler{
                 getObsProperty("sight").updateValue(Literal.parseLiteral("wall"));
             else
                 getObsProperty("sight").updateValue(Literal.parseLiteral(object));
-
+        }
+        else if (json.getString("perception").equals("rotation")){
+            String rotationStr = json.getString("rotation");
+            String[] stringValues = rotationStr.substring(1, rotationStr.length() - 1).split(",\\s*");
+        
+            // Converti le stringhe in numeri float
+            float[] rotation = new float[stringValues.length];
+            for (int i = 0; i < stringValues.length; i++) {
+                rotation[i] = Float.parseFloat(stringValues[i]);
+            }
+            System.out.println("[rotation] " + rotation[1]);
+            String rotLit = "";
+            if (rotation[1] < 4.0)
+                rotLit = "down";
+            if (rotation[1] < 2.0)
+                rotLit = "left";
+            if (rotation[1] < 1.0)
+                rotLit = "up";
+            if (rotation[1] < 0.0)
+                rotLit = "right";
+            else
+                rotLit = "invalid";
+            getObsProperty("veRotation").updateValue(Literal.parseLiteral(rotLit));
         }
     }
 }
