@@ -31,6 +31,9 @@ func _physics_process(delta):
 	#see()
 	if $AnimationPlayer.is_playing():
 		translate(-Vector3.FORWARD * delta)
+	#if not $AnimationPlayer.is_playing() and old_position != position:
+		#send_position()
+		#old_position = position
 	while tcp_server.is_connection_available():
 		var conn: StreamPeerTCP = tcp_server.take_connection()
 		assert(conn != null)
@@ -105,11 +108,29 @@ func manage_move(idea):
 		pass
 	print("[POS]\t", position)
 	$AnimationPlayer.play("Walking_A")
+	
+func manage_goto(idea):
+	while(seeing):
+		pass
+	
+	
+func manage_requests(idea):
+	if idea["information"] == "position":
+		send_position()
+	
+func send_position():
+	var perception = {"perception": "position", "data": {"x": position[0], "y": position[2]}}
+	print("sending position ", position)
+	ws.send_text(JSON.stringify(perception))
 
 func manage(idea):
 	if (idea["action"] == "rotate"):
 		manage_rotate(idea)
 	if (idea["action"] == "move"):
 		manage_move(idea)
+	if (idea["action"] == "goto"):
+		pass
+	#if (idea["action"] == "request"):
+		#manage_requests(idea)
 	#ws.send_text("{}")
 	

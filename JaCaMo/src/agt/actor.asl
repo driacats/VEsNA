@@ -1,143 +1,183 @@
-path(0, 0, up, empty).
-// path(0, 0, down, empty).
-// path(0, 0, right, empty).
-// path(0, 0, left, empty).
+// path(0, 0, up, empty).
 rotation(up).
 position(0, 0).
-target(up).
-// decision(0, 0, up).
+// target(up).
+
+step(X, Y+1, up) :- position(X, Y).
+step(X, Y-1, down) :- position(X, Y).
+step(X+1, Y, right) :- position(X, Y).
+step(X-1, Y, left) :- position(X, Y).
+
+opposite(up, Opposite) :- Opposite = down.
+opposite(down, Opposite) :- Opposite = up.
+opposite(right, Opposite) :- Opposite = left.
+opposite(left, Opposite) :- Opposite = right.
+
+right(up, Right) :- Right = right.
+right(down, Right) :- Right = left.
+right(right, Right) :- Right = up.
+right(left, Right) :- Right = down.
 
 +!start
     :   true
     <-  .print("Starting actor");
         makeArtifact("actor", "stage.Actor", [], ArtId);
         focus(ArtId);
-        .wait(1000);
+        .wait(2000);
         !walk.
-        // !lookaround;
-        // .wait(1000);
-        // !gostraighton(up);
-        // .wait(1000);
-        // !rotate(right);
-        // .wait(1000);
-        // !gostraighton(right).
 
++!whereiam
+    :   true
+    <-  .print("Where I am?");
+        whereiam;
+        .wait(3000);
+        ?position(X, Y);
+        .print("Ok, I am at (", X, ", ", Y, ")").
+
+// walk makes the agent walk around, always looking for a new empty direction
 +!walk
     :   position(X, Y) & path(X, Y, Direction, empty) & target(Direction)
-    <-  !gostraighton(Direction);
+    <-  .print("Going direction ", Direction);
+        !gostraighton(Direction);
         !walk.
 
 +!walk
-    :   position(X, Y) & path(X, Y, Direction, stop_condition) & target(Direction)
-    <-  !findemptyDirection;
+    :   position(X, Y) & path(X, Y, Direction, stop) & target(Direction)
+    <-  .print("Looking for a new direction to walk");
+        !findemptyDirection;
         !walk.
 
++!walk
+    :   position(X, Y) & not target(_)
+    <-  .print("No target present, finding a way.");
+        !findemptyDirection;
+        !walk.
+
+// Rotate the agent to all directions
 +!lookaround
-    :   true
-    <-  !rotate(right);
-        .wait(1000);
-        !rotate(down);
-        .wait(1000);
-        !rotate(left);
-        .wait(1000);
-        !rotate(up);
+    :   rotation(Direction)
+    <-  .print("Looking around...");
+        ?opposite(Direction, Opposite);
+        !rotate(Opposite);
+        ?right(Opposite, Right);
+        !rotate(Right);
+        ?opposite(Right, RightOpposite);
+        !rotate(RightOpposite);
+        !rotate(Direction).
+
+
+// Rotate the agent to the given @direction Direction;
+// waits a second if any seen is caught.
++!rotate(Direction)
+    :   position(X, Y) & not rotation(Direction)
+    <-  .print("Rotating to ", Direction);
+        -+rotation(Direction);
+        ?is_path(X, Y, Direction, Condition, Path);
+        +Path;
+        rotate(Direction);
         .wait(1000).
 
 +!rotate(Direction)
-    :   rotation(OldDirection) & position(X, Y)
-    <-  .print("rotating to ", Direction);
-        -rotation(OldDirection);
-        +rotation(Direction);
-        +path(X, Y, Direction, empty);
-        rotate(Direction);
-        .wait(500).
-
-+!rotate(Direction)
     :   rotation(Direction)
-    <-  .print("actor alreay in position.").
+    <-  .print("Already in correct direction: ", Direction).
 
+
+// Move the agent of one step in the given direction
++!move(Direction)
+    :   position(X, Y) & rotation(Direction) & step(X1, Y1, Direction) & not path(X, Y, Direction, stop)
+    <-  -+position(X1, Y1);
+        ?is_path(X1, Y1, Direction, Condition, Path);
+        +Path;
+        move;
+        .print("Moving to ", X1, ", ", Y1);
+        .wait(1500).
+
+// Rotate in the correct direction if not already right
 +!move(Direction)
     :   not rotation(Direction)
-    <-  rotate(Direction);
+    <-  !rotate(Direction);
         .wait(1000);
         !move(Direction).
 
-+!move(Direction)
-    :   Direction == up & position(X, Y) & rotation(Direction)
-    <-  -position(X, Y);
-        +position(X, Y+1);
-        +path(X, Y+1, Direction, empty);
-        move;
-        .wait(1500).
+// Check if the path is already in the belief base
++?is_path(X, Y, Direction, Condition, Path)
+    :   path(X, Y, Direction, Condition)
+    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is already ", Condition);
+        Path = path(X, Y, Direction, Condition).
 
-+!move(Direction)
-    :   Direction == down & position(X, Y) & rotation(Direction)
-    <-  -position(X, Y);
-        +position(X, Y-1);
-        +path(X, Y-1, Direction, empty);
-        move;
-        .wait(1500).
++?is_path(X, Y, Direction, Condition, Path)
+    :   true
+    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not known.");
+        Path = path(X, Y, Direction, empty).
 
-+!move(Direction)
-    :   Direction == right & position(X, Y) & rotation(Direction)
-    <-  -position(X, Y);
-        +position(X+1, Y);
-        +path(X+1, Y, Direction, empty);
-        move;
-        .wait(1500).
-
-+!move(Direction)
-    :   Direction == left & position(X, Y) & rotation(Direction)
-    <-  -position(X, Y);
-        +position(X-1, Y);
-        +path(X-1, Y, Direction, empty);
-        move;
-        .wait(1500).
-
+// Go in one direction til you find a wall
 +!gostraighton(Direction)
-    :   rotation(Direction) & position(X, Y) & path(X, Y, Direction, empty)
+    :   position(X, Y) & path(X, Y, Direction, empty)
     <-  .print("I make a step ", Direction);
         !move(Direction);
         !gostraighton(Direction).
 
 +!gostraighton(Direction)
-    :   rotation(Direction) & position(X, Y) & path(X, Y, Direction, stop_condition)
+    :   rotation(Direction) & position(X, Y) & path(X, Y, Direction, stop)
     <-  .print("Destination reached!").
 
 +!gostraighton(Direction)
-    :   position(X, Y) & path(X, Y, Direction, empty)
-    <-  !rotate(Direction);
-        !move(Direction);
-        !gostraighton(Direction).
+    :   position(X, Y) & not path(X, Y, Direction, _)
+    <-  .print("I don't know a path in ", Direction);
+        !findemptyDirection.
 
+// Finds an empty direction from position X, Y
 +!findemptyDirection
     :   position(X, Y) & rotation(Direction) & path(X, Y, Direction, empty)
     <-  .print("Current direction is empty.").
 
 +!findemptyDirection
-    :   position(X, Y) & rotation(Direction) & path(X, Y, Direction, stop_condition)
+    :   position(X, Y) & rotation(Direction)
     <-  !lookaround;
         .wait(1000);
-        !newtarget;
-        .print("Selected new target").
+        !newtarget.
+
+// Select a new target direction that can be followed
++!newtarget
+    :   position(X, Y) & path(X, Y, Direction, empty) & not step(X, Y, Direction)
+    <-  -+target(Direction);
+        +decision(X, Y, Direction);
+        .print("Selected new target ", Direction).
 
 +!newtarget
-    :   position(X, Y) & rotation(Direction) & path(X, Y, OtherDirection, empty) & target(OldTarget) & not (OldTarget == OtherDirection) & not decision(X, Y, OtherDirection)
-    <-  -target(OldTarget);
-        +target(OtherDirection);
-        +decision(X, Y, OtherDirection);
-        .print("new target: ", Direction).
-
-+!newtarget
-    :   position(X, Y) & path(X, Y, Direction, empty) & decision(X, Y, Direction)
+    :   position(X, Y) & not path(X, Y, Direction, empty) & decision(X, Y, Direction)
     <-  .print("All targets already tried.").
 
-+sight(Object)
-    :   position(X, Y) & veRotation(Direction) & distance(Distance)
-    <-  .print("I saw ", Object, " ", Distance, " in position (", X, ", ", Y, ") and rotation ", Direction);
++!newtarget
+    :   position(X, Y)
+    <-  .print("No available paths.").
+
+// // +sight(Object)
+// //     :   position(X, Y) & veRotation(Direction) & distance(Distance)
+// //     <-  .print("I saw ", Object, " ", Distance, " in position (", X, ", ", Y, ") and rotation ", Direction);
+// //         +saw(X, Y, Direction, Object, Distance).
+
++seen(Object, Direction, Distance)
+    :   position(X, Y)
+    <-  .print("Got ", Object, " with rotation ", Direction, " at distance ", Distance);
         +saw(X, Y, Direction, Object, Distance).
 
-+saw(X, Y, Direction, Object, Distance)
++saw(X, Y, Direction, wall, Distance)
     :   path(X, Y, Direction, Condition) & (Distance == touch | Distance == near)
-    <-  -path(X, Y, Direction, Condition);
-        +path(X, Y, Direction, stop_condition).
+    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (updating).");
+        -path(X, Y, Direction, empty);
+        +path(X, Y, Direction, stop).
+
++saw(X, Y, Direction, wall, Distance)
+    :   Distance == touch | Distance == near
+    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (creating).");
+        +path(X, Y, Direction, stop).
+
+// +saw(X, Y, Direction, door, Distance)
+//     :   true
+//     <-  .print("I saw a door, I go for it.");
+//         -+target(Direction).
+
+{ include("$jacamo/templates/common-cartago.asl") }
+{ include("$jacamo/templates/common-moise.asl") }
+{ include("$moise/asl/org-obedient.asl") }
