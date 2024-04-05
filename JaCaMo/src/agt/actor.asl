@@ -1,7 +1,5 @@
-// path(0, 0, up, empty).
 rotation(up).
 position(0, 0).
-// target(up).
 
 step(X, Y+1, up) :- position(X, Y).
 step(X, Y-1, down) :- position(X, Y).
@@ -152,11 +150,6 @@ right(left, Right) :- Right = down.
     :   position(X, Y)
     <-  .print("No available paths.").
 
-// // +sight(Object)
-// //     :   position(X, Y) & veRotation(Direction) & distance(Distance)
-// //     <-  .print("I saw ", Object, " ", Distance, " in position (", X, ", ", Y, ") and rotation ", Direction);
-// //         +saw(X, Y, Direction, Object, Distance).
-
 +seen(Object, Direction, Distance)
     :   position(X, Y)
     <-  .print("Got ", Object, " with rotation ", Direction, " at distance ", Distance);
@@ -173,10 +166,13 @@ right(left, Right) :- Right = down.
     <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (creating).");
         +path(X, Y, Direction, stop).
 
-// +saw(X, Y, Direction, door, Distance)
-//     :   true
-//     <-  .print("I saw a door, I go for it.");
-//         -+target(Direction).
++saw(X, Y, Drection, door, Distance)
+    :   true
+    <-  whereiam;
+        whereis(door).
+
++at(X, Y)
+    <-  .print("I am at (", X, ", ", Y, ")").
 
 { include("$jacamo/templates/common-cartago.asl") }
 { include("$jacamo/templates/common-moise.asl") }

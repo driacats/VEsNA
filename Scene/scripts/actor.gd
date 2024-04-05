@@ -115,12 +115,17 @@ func manage_goto(idea):
 	
 	
 func manage_requests(idea):
-	if idea["information"] == "position":
-		send_position()
+	if idea["data"]["information"] == "position":
+		if (idea["data"]["object"] == "me"):
+			send_position(position)
+		elif (idea["data"]["object"] == "door"):
+			var door = get_tree().get_current_scene().get_node("Room1/Wall_Doorway2").position
+			send_position(door)
+			
 	
-func send_position():
-	var perception = {"perception": "position", "data": {"x": position[0], "y": position[2]}}
-	print("sending position ", position)
+func send_position(pos):
+	var perception = {"perception": "position", "data": {"x": pos[0], "y": pos[2]}}
+	print("sending position ", pos)
 	ws.send_text(JSON.stringify(perception))
 
 func manage(idea):
@@ -130,7 +135,7 @@ func manage(idea):
 		manage_move(idea)
 	if (idea["action"] == "goto"):
 		pass
-	#if (idea["action"] == "request"):
-		#manage_requests(idea)
+	if (idea["action"] == "request"):
+		manage_requests(idea)
 	#ws.send_text("{}")
 	
