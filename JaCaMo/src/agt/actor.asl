@@ -1,55 +1,56 @@
+left(up, left).
+left(left, down).
+left(down, right).
+left(right, up).
+
+right(up, right).
+right(left, up).
+right(down, left).
+right(right, down).
+
+opposite(up, down).
+opposite(down, up).
+opposite(right, left).
+opposite(left, right).
+
 rotation(up).
-position(0, 0).
 
-step(X, Y+1, up) :- position(X, Y).
-step(X, Y-1, down) :- position(X, Y).
-step(X+1, Y, right) :- position(X, Y).
-step(X-1, Y, left) :- position(X, Y).
+different(Dir1, Dir2, Dir3) :- Dir1 \== Dir2 & Dir1 \== Dir3 & Dir2 \== Dir3.
 
-opposite(up, Opposite) :- Opposite = down.
-opposite(down, Opposite) :- Opposite = up.
-opposite(right, Opposite) :- Opposite = left.
-opposite(left, Opposite) :- Opposite = right.
+// corridor(Landmark) :- Obj1(Landmark, )
+dead_end(Landmark) :- object(_, Landmark, Direction1, _) & object(_, Landmark, Direction2, _) & object(_, Landmark, Direction3, _) & different(Direction1, Direction2, Direction3).
+corridor(Landmark) :- object(_, Landmark, Direction1, _) & object(_, Landmark, Direction2, _) & Direction1 \== Direction2.
+deviation(Landmark) :- object(_, Landmark, _, _).
+room(Landmark) :- not object(_, Landmark, _, _).
 
-right(up, Right) :- Right = right.
-right(down, Right) :- Right = left.
-right(right, Right) :- Right = up.
-right(left, Right) :- Right = down.
+// landmark(position, previous)
+landmark(initial, empty).
+
+actual_landmark(initial).
+
+// TODO dead end
 
 +!start
     :   true
     <-  .print("Starting actor");
-        makeArtifact("actor", "stage.Actor", [], ArtId);
+        .my_name(Me);
+        .concat(Me, "actor", ArtName);
+        makeArtifact(ArtName, "stage.Actor", [], ArtId);
         focus(ArtId);
         .wait(2000);
-        !walk.
-
-+!whereiam
-    :   true
-    <-  .print("Where I am?");
-        whereiam;
-        .wait(3000);
-        ?position(X, Y);
-        .print("Ok, I am at (", X, ", ", Y, ")").
-
-// walk makes the agent walk around, always looking for a new empty direction
-+!walk
-    :   position(X, Y) & path(X, Y, Direction, empty) & target(Direction)
-    <-  .print("Going direction ", Direction);
-        !gostraighton(Direction);
-        !walk.
-
-+!walk
-    :   position(X, Y) & path(X, Y, Direction, stop) & target(Direction)
-    <-  .print("Looking for a new direction to walk");
-        !findemptyDirection;
-        !walk.
-
-+!walk
-    :   position(X, Y) & not target(_)
-    <-  .print("No target present, finding a way.");
-        !findemptyDirection;
-        !walk.
+        !lookaround;
+        .wait(4000);
+        ?actual_landmark(Landmark);
+        !actual_position(Landmark);
+        .wait(2000);
+        move;
+        .wait(2000);
+        ?actual_landmark(Landmark);
+        !actual_position(Landmark);
+        move;
+        .wait(2000);
+        ?actual_landmark(Landmark);
+        !actual_position(Landmark).
 
 // Rotate the agent to all directions
 +!lookaround
@@ -67,11 +68,9 @@ right(left, Right) :- Right = down.
 // Rotate the agent to the given @direction Direction;
 // waits a second if any seen is caught.
 +!rotate(Direction)
-    :   position(X, Y) & not rotation(Direction)
+    :   not rotation(Direction)
     <-  .print("Rotating to ", Direction);
         -+rotation(Direction);
-        ?is_path(X, Y, Direction, Condition, Path);
-        +Path;
         rotate(Direction);
         .wait(1000).
 
@@ -79,105 +78,38 @@ right(left, Right) :- Right = down.
     :   rotation(Direction)
     <-  .print("Already in correct direction: ", Direction).
 
++!actual_position(Landmark)
+    :   dead_end(Landmark)
+    <-  .print("Actually I am in a dead end.").
 
-// Move the agent of one step in the given direction
-+!move(Direction)
-    :   position(X, Y) & rotation(Direction) & step(X1, Y1, Direction) & not path(X, Y, Direction, stop)
-    <-  -+position(X1, Y1);
-        ?is_path(X1, Y1, Direction, Condition, Path);
-        +Path;
-        move;
-        .print("Moving to ", X1, ", ", Y1);
-        .wait(1500).
++!actual_position(Landmark)
+    :   corridor(Landmark)
+    <-  .print("Actually I am in a corridor").
 
-// Rotate in the correct direction if not already right
-+!move(Direction)
-    :   not rotation(Direction)
-    <-  !rotate(Direction);
-        .wait(1000);
-        !move(Direction).
++!actual_position(Landmark)
+    :   deviation(Landmark)
+    <-  .print("Actually I am at a deviation").
 
-// Check if the path is already in the belief base
-+?is_path(X, Y, Direction, Condition, Path)
-    :   path(X, Y, Direction, Condition)
-    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is already ", Condition);
-        Path = path(X, Y, Direction, Condition).
++!actual_position(Landmark)
+    :   room(Landmark)
+    <-  .print("Actually I am in a room").
 
-+?is_path(X, Y, Direction, Condition, Path)
++seen(Object, Direction, Distance, front)
+    :   actual_landmark(Landmark)
+    <-  .print("I can see a ", Object, " on my ", Side, " (I am watching ", Direction, ") at distance ", Distance);
+        +object(Object, Landmark, Direction, Distance).
+
++seen(Object, Direction, Distance, left)
+    :   actual_landmark(Landmark)
+    <-  ?left(Direction, GlobalDir);
+        +object(Object, Landmark, GlobalDir, Distance).
+
+    
++seen(Object, Direction, Distance, right)
+    :   actual_landmark(Landmark)
+    <-  ?right(Direction, GlobalDir);
+        +object(Object, Landmark, GlobalDir, Distance).
+
++seen(Object, Direction, Side)
     :   true
-    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not known.");
-        Path = path(X, Y, Direction, empty).
-
-// Go in one direction til you find a wall
-+!gostraighton(Direction)
-    :   position(X, Y) & path(X, Y, Direction, empty)
-    <-  .print("I make a step ", Direction);
-        !move(Direction);
-        !gostraighton(Direction).
-
-+!gostraighton(Direction)
-    :   rotation(Direction) & position(X, Y) & path(X, Y, Direction, stop)
-    <-  .print("Destination reached!").
-
-+!gostraighton(Direction)
-    :   position(X, Y) & not path(X, Y, Direction, _)
-    <-  .print("I don't know a path in ", Direction);
-        !findemptyDirection.
-
-// Finds an empty direction from position X, Y
-+!findemptyDirection
-    :   position(X, Y) & rotation(Direction) & path(X, Y, Direction, empty)
-    <-  .print("Current direction is empty.").
-
-+!findemptyDirection
-    :   position(X, Y) & rotation(Direction)
-    <-  !lookaround;
-        .wait(1000);
-        !newtarget.
-
-// Select a new target direction that can be followed
-+!newtarget
-    :   position(X, Y) & path(X, Y, Direction, empty) & not step(X, Y, Direction)
-    <-  -+target(Direction);
-        +decision(X, Y, Direction);
-        .print("Selected new target ", Direction).
-
-+!newtarget
-    :   position(X, Y) & not path(X, Y, Direction, empty) & decision(X, Y, Direction)
-    <-  .print("All targets already tried.").
-
-+!newtarget
-    :   position(X, Y)
-    <-  .print("No available paths.").
-
-+seen(Object, Direction, Distance)
-    :   position(X, Y)
-    <-  .print("Got ", Object, " with rotation ", Direction, " at distance ", Distance);
-        +saw(X, Y, Direction, Object, Distance).
-
-+seen(Object, Direction, Distance, Side)
-    :   position(X, Y)
-    <-  .print("I can see a ", Object, " on my ", Side, " (I am watching ", Direction, ") at distance ", Distance).
-
-+saw(X, Y, Direction, wall, Distance)
-    :   path(X, Y, Direction, Condition) & (Distance == touch | Distance == near)
-    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (updating).");
-        -path(X, Y, Direction, empty);
-        +path(X, Y, Direction, stop).
-
-+saw(X, Y, Direction, wall, Distance)
-    :   Distance == touch | Distance == near
-    <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (creating).");
-        +path(X, Y, Direction, stop).
-
-+saw(X, Y, Drection, door, Distance)
-    :   true
-    <-  whereiam;
-        whereis(door).
-
-+at(X, Y)
-    <-  .print("I am at (", X, ", ", Y, ")").
-
-{ include("$jacamo/templates/common-cartago.asl") }
-{ include("$jacamo/templates/common-moise.asl") }
-{ include("$moise/asl/org-obedient.asl") }
+    <-  .print("There is ", Object, " at my ", Side, " in direction ", Direction).

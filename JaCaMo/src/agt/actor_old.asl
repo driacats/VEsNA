@@ -1,7 +1,5 @@
-// path(0, 0, up, empty).
 rotation(up).
 position(0, 0).
-// target(up).
 
 step(X, Y+1, up) :- position(X, Y).
 step(X, Y-1, down) :- position(X, Y).
@@ -24,15 +22,13 @@ right(left, Right) :- Right = down.
         makeArtifact("actor", "stage.Actor", [], ArtId);
         focus(ArtId);
         .wait(2000);
-        !whereiam;
-        .wait(2000);
         !walk.
 
 +!whereiam
     :   true
     <-  .print("Where I am?");
         whereiam;
-        .wait(2000);
+        .wait(3000);
         ?position(X, Y);
         .print("Ok, I am at (", X, ", ", Y, ")").
 
@@ -154,11 +150,14 @@ right(left, Right) :- Right = down.
     :   position(X, Y)
     <-  .print("No available paths.").
 
-// Percept a object
-+sight(Object)
-    :   position(X, Y) & veRotation(Direction) & distance(Distance)
-    <-  .print("I saw ", Object, " ", Distance, " in position (", X, ", ", Y, ") and rotation ", Direction);
++seen(Object, Direction, Distance)
+    :   position(X, Y)
+    <-  .print("Got ", Object, " with rotation ", Direction, " at distance ", Distance);
         +saw(X, Y, Direction, Object, Distance).
+
++seen(Object, Direction, Distance, Side)
+    :   position(X, Y)
+    <-  .print("I can see a ", Object, " on my ", Side, " (I am watching ", Direction, ") at distance ", Distance).
 
 +saw(X, Y, Direction, wall, Distance)
     :   path(X, Y, Direction, Condition) & (Distance == touch | Distance == near)
@@ -171,7 +170,14 @@ right(left, Right) :- Right = down.
     <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (creating).");
         +path(X, Y, Direction, stop).
 
-+saw(X, Y, Direction, door, Distance)
++saw(X, Y, Drection, door, Distance)
     :   true
-    <-  .print("I saw a door, I go for it.");
-        -+target(Direction).
+    <-  whereiam;
+        whereis(door).
+
++at(X, Y)
+    <-  .print("I am at (", X, ", ", Y, ")").
+
+{ include("$jacamo/templates/common-cartago.asl") }
+{ include("$jacamo/templates/common-moise.asl") }
+{ include("$moise/asl/org-obedient.asl") }

@@ -79,15 +79,19 @@ public class Actor extends Artifact implements WsClientMsgHandler{
         send(json);
     }
 
-    @OPERATION
+    @INTERNAL_OPERATION
     void handleSight(JSONObject data){
 
         String object = data.getString("object");
-        String distance = data.getString("distance");
         String direction = data.getString("rotation");
         String side = data.getString("side");
 
-        signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
+        if (data.has("distance")){
+            String distance = data.getString("distance");
+            signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
+        } else {
+            signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(side));
+        }
     }
 
     private void handlePosition(JSONObject data){
