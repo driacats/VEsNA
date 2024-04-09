@@ -81,46 +81,13 @@ public class Actor extends Artifact implements WsClientMsgHandler{
 
     @OPERATION
     void handleSight(JSONObject data){
+
         String object = data.getString("object");
-            
-        String rotationStr = data.getString("rotation");
-        String[] stringValues = rotationStr.substring(1, rotationStr.length() - 1).split(",\\s*");
+        String distance = data.getString("distance");
+        String direction = data.getString("rotation");
+        String side = data.getString("side");
 
-        float[] rotation = new float[stringValues.length];
-        for (int i = 0; i < stringValues.length; i++) {
-            rotation[i] = Float.parseFloat(stringValues[i]);
-        }
-
-        String rotLit = "";
-        if (rotation[1] < 4.0)
-            rotLit = "down";
-        if (rotation[1] < 2.0)
-            rotLit = "left";
-        if (rotation[1] < 1.0)
-            rotLit = "up";
-        if (rotation[1] < 0.0)
-            rotLit = "right";
-
-        String dist = "";
-        float distance = Float.parseFloat(data.getString("distance"));
-        if (distance < 3.5)
-            dist = "touch";
-        else if (distance < 5.0)
-            dist = "near";
-        else if (distance < 8.0)
-            dist = "medium";
-        else
-            dist = "far";
-
-        String obj = "";
-        if (object.toLowerCase().contains("door"))
-            obj = "door";
-        else if (object.toLowerCase().contains("wall"))
-            obj = "wall";
-        else
-            obj = object;
-
-        signal("seen", Literal.parseLiteral(obj), Literal.parseLiteral(rotLit), Literal.parseLiteral(dist));
+        signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
     }
 
     private void handlePosition(JSONObject data){

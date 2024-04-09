@@ -155,6 +155,10 @@ right(left, Right) :- Right = down.
     <-  .print("Got ", Object, " with rotation ", Direction, " at distance ", Distance);
         +saw(X, Y, Direction, Object, Distance).
 
++seen(Object, Direction, Distance, Side)
+    :   position(X, Y)
+    <-  .print("I can see a ", Object, " on my ", Side, " (I am watching ", Direction, ") at distance ", Distance).
+
 +saw(X, Y, Direction, wall, Distance)
     :   path(X, Y, Direction, Condition) & (Distance == touch | Distance == near)
     <-  .print("The path in direction ", Direction, " from position (", X, ", ", Y, ") is not empty (updating).");
