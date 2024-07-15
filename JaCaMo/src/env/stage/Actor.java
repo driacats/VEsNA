@@ -88,9 +88,11 @@ public class Actor extends Artifact implements WsClientMsgHandler{
 
         if (data.has("distance")){
             String distance = data.getString("distance");
-            signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
+            // signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
+            defineObsProperty("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(distance), Literal.parseLiteral(side));
         } else {
-            signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(side));
+            // signal("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(side));
+            defineObsProperty("seen", Literal.parseLiteral(object.toLowerCase()), Literal.parseLiteral(direction), Literal.parseLiteral(side));
         }
     }
 

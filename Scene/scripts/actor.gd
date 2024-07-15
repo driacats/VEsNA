@@ -78,11 +78,27 @@ func compute_obj_name(obj):
 	var obj_n = obj.name.right(1)
 	return obj_str + room_n + obj_n
 	
-func get_side(my_x, obj_x):
-	if (obj_x - my_x) > 0: 
-		return "left"
+func get_side(my_pos, obj_pos, orientation):
+	if orientation == "up":
+		if obj_pos.x > my_pos.x: 
+			return "left"
+		else:
+			return "right"
+	elif orientation == "down":
+		if obj_pos.x > my_pos.x: 
+			return "right"
+		else:
+			return "left"
+	elif orientation == "left":
+		if obj_pos.z > my_pos.z:
+			return "right"
+		else:
+			return "left"
 	else:
-		return "right" 
+		if obj_pos.z > my_pos.z:
+			return "left"
+		else:
+			return "right"
 
 func see():
 	# There are some interesting situations in which the actor should not "perceive" objects to not overflow:
@@ -104,6 +120,8 @@ func see():
 	var lateral_sight = $Rig/Skeleton3D/Rogue_Head_Hooded/LateralView
 	# Get all the frontal overlapping bodies
 	var objects = sight.get_overlapping_bodies()
+	var obj_names = []
+	objects.erase(self)
 	if len(objects) > 0:
 		var space_state = get_world_3d().direct_space_state
 		for obj in objects:
@@ -114,39 +132,41 @@ func see():
 				var distance = dist_to_logic(float_distance)
 				var direction = vector_to_direction(global_rotation)
 				var obj_name = compute_obj_name(obj)
-				var perception = {"perception": "sight", "data": {"object": obj_name, "distance": distance, "rotation": direction, "position": position, "side": "front"}}
+				obj_names.append(obj_name)
+				var perception = {"perception": "sight", "data": {"object": obj_name, "distance": distance, "rotation": direction, "side": "front"}}
 				print("[SEE] room: ", obj.get_parent().name, ", ", JSON.stringify(perception))
 				# Send the message to the mind
 				ws.send_text(JSON.stringify(perception))
 	else:
 		var direction = vector_to_direction(global_rotation)
-		var perception = {"perception": "sight", "data": {"object": "empty", "rotation": direction, "position": position, "side": "front"}}
+		var perception = {"perception": "sight", "data": {"object": "empty", "rotation": direction, "side": "front"}}
 		ws.send_text(JSON.stringify(perception))
 		print("[SEE] No objects seen in front.")
 				
 	var lateral_objects = lateral_sight.get_overlapping_bodies()
+	lateral_objects.erase(self)
 	var left = false
 	var right = false
 	if len(lateral_objects) > 0:
 		var space_state = get_world_3d().direct_space_state
 		for obj in lateral_objects:
-			# Compute the vector from sight to object and check intersection to check occlusions
-			var target_vector = PhysicsRayQueryParameters3D.create(lateral_sight.global_position, obj.global_position - lateral_sight.global_position)
-			if space_state.intersect_ray(target_vector):
-				var float_distance = lateral_sight.global_position.distance_to(obj.global_position)
-				var distance = dist_to_logic(float_distance)
-				
-				var side = get_side(global_position.x, obj.global_position.x)
-				if side == "left":
-					left = true
-				if side == "right":
-					right = true
-				var obj_name = compute_obj_name(obj)
-				var direction = vector_to_direction(global_rotation)
-				var perception = {"perception": "sight", "data": {"object": obj_name, "distance": distance, "rotation": direction, "position": position, "side": side}}
-				print("[SEE] room: ", obj.get_parent().name, ", ", JSON.stringify(perception))
-				# Send the message to the mind
-				ws.send_text(JSON.stringify(perception))
+			var obj_name = compute_obj_name(obj)
+			if not obj_name in obj_names:
+				# Compute the vector from sight to object and check intersection to check occlusions
+				var target_vector = PhysicsRayQueryParameters3D.create(lateral_sight.global_position, obj.global_position - lateral_sight.global_position)
+				if space_state.intersect_ray(target_vector):
+					var float_distance = lateral_sight.global_position.distance_to(obj.global_position)
+					var distance = dist_to_logic(float_distance)
+					var direction = vector_to_direction(global_rotation)
+					var side = get_side(global_position, obj.global_position, direction)
+					if side == "left":
+						left = true
+					if side == "right":
+						right = true
+					var perception = {"perception": "sight", "data": {"object": obj_name, "distance": distance, "rotation": direction, "side": side}}
+					print("[SEE] room: ", obj.get_parent().name, ", ", JSON.stringify(perception))
+					# Send the message to the mind
+					ws.send_text(JSON.stringify(perception))
 	if not left:
 		var direction = vector_to_direction(global_rotation)
 		var perception = {"perception": "sight", "data": {"object": "empty", "rotation": direction, "position": position, "side": "left"}}
