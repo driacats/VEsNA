@@ -16,14 +16,18 @@ start.
 +!start
     :   true
     <-  .print("Starting actor");
-        .my_name(Me);
-        .concat(Me, "actor", ArtName);
-        makeArtifact(ArtName, "stage.Actor", [], ArtId);
-        focus(ArtId);
+        .wait(5000);
+        body.walk(random);
         .wait(2000);
-        !update_landmark;
-        !lookaround;
-        !walk.
+        body.walk(region0).
+        // .my_name(Me);
+        // .concat(Me, "actor", ArtName);
+        // makeArtifact(ArtName, "stage.Actor", [], ArtId);
+        // focus(ArtId);
+        // .wait(2000);
+        // !update_landmark;
+        // !lookaround;
+        // !walk.
         // !lookaround;
         // .wait(4000);
         // ?actual_landmark(Landmark);
