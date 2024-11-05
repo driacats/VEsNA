@@ -44,6 +44,7 @@ func _physics_process(delta):
 		while ws.get_available_packet_count():
 			var msg = ws.get_packet().get_string_from_ascii()
 			log_message(msg)
+			ws.send_text("prova")
 			#var idea = JSON.parse_string(msg)
 			#manage(idea)
 	

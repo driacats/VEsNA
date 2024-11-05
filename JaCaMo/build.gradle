@@ -41,7 +41,7 @@ sourceSets {
         java {
             srcDir 'src/env'
             srcDir 'src/agt'
-            srcDir 'src/embodied'
+            srcDir 'src/vesna'
         }
     }
 }

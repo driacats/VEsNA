@@ -1,11 +1,10 @@
 mas vesna {
 
-    agent actor:actor.asl{
+    agent vesna:vesna.asl{
         beliefs:    address(localhost)
                     port(9080)
-        goals: start
-        ag-class: vesna.EmbodiedAgent
-        address: localhost
+        goals:      start
+        ag-class:   vesna.EmbodiedAgent
     }
     
 }

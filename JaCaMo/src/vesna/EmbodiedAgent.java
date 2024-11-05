@@ -17,8 +17,9 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
 
     @Override
     public void loadInitialAS(String asSrc) throws Exception{
+
         super.loadInitialAS(asSrc);
-        BeliefBase bb = getBB();
+
         Unifier addrUnifier = new Unifier();
         Unifier portUnifier = new Unifier();
         believes(Literal.parseLiteral("address(X)"), addrUnifier);
@@ -29,6 +30,7 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
         
         URI full_addr = new URI("ws://" + address + ":" + port);
         client = new WsClient(full_addr);
+        client.setMsgHandler(this::handleMsg);
         client.connect();
     }
 
@@ -39,6 +41,11 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
     @Override
     public void handleMsg(String msg){
         System.out.println("Received : " + msg);
+        try {
+            addBel(Literal.parseLiteral(msg));
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

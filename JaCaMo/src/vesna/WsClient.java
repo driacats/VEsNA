@@ -1,4 +1,4 @@
-package body;
+package vesna;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,6 +21,10 @@ public class WsClient extends WebSocketClient {
 		super(serverURI);
 	}
 
+	public void setMsgHandler(WsClientMsgHandler handler){
+		this.msgHandler = handler;
+	}
+
 	@Override
 	public void onOpen(ServerHandshake handshakedata) {
 		System.out.println("[WsClient] new connection opened");
@@ -33,7 +37,9 @@ public class WsClient extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		System.out.println("received message: " + message);
+		if (msgHandler != null){
+			msgHandler.handleMsg(message);
+		}
 	}
 
 	@Override
@@ -45,5 +51,4 @@ public class WsClient extends WebSocketClient {
 	public void onError(Exception ex) {
 		System.err.println("an error occurred:" + ex);
 	}
-
 }

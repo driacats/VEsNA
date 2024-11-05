@@ -1,13 +1,13 @@
-{ include ("orienteering.asl") }
-{ include ("motion.asl") }
-{ include ("sight.asl") }
-
-rotation(up).
-
-// landmark(position, previous)
-// landmark(0, empty).
-first_step.
-start.
+// { include ("orienteering.asl") }
+// { include ("motion.asl") }
+// { include ("sight.asl") }
+// 
+// rotation(up).
+// 
+// // landmark(position, previous)
+// // landmark(0, empty).
+// first_step.
+// start.
 
 // path(Landmark1, Landmark2, [Direction1, Direction2, ..., DirectionN]).
 
@@ -15,9 +15,9 @@ start.
 
 +!start
     :   true
-    <-  .print("Starting actor");.
-        //  .wait(5000);
-        //  body.walk(random);
+    <-  .print("Starting actor");
+        .wait(5000);
+        vesna.walk(random).
         //  .wait(2000);
         //  body.walk(region0).
         // .my_name(Me);
