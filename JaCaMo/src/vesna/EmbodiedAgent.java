@@ -4,6 +4,10 @@ import jason.architecture.AgArch;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import jason.bb.BeliefBase;
 import jason.mas2j.ClassParameters;
 import jason.runtime.Settings;
@@ -40,11 +44,44 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
 
     @Override
     public void handleMsg(String msg){
-        System.out.println("Received : " + msg);
-        try {
-            addBel(Literal.parseLiteral(msg));
-        } catch(Exception e){
-            e.printStackTrace();
+        JSONObject log = new JSONObject(msg);
+        String sender = log.getString("sender");
+        String receiver = log.getString("receiver");
+        String type = log.getString("type");
+        TransitionSystem ts = getTS();
+        Unifier un = new Unifier();
+        if ( type.equals( "signal" ) ) {
+            JSONObject sig = log.getJSONObject("msg");
+            String functor = sig.getString("functor");
+            Literal signal = Literal.parseLiteral(functor);
+            JSONArray terms = sig.getJSONArray("terms");
+            for (int i=0; i<terms.length(); i++){
+                String t = terms.getString(i);
+                Literal t_n = Literal.parseLiteral(t);
+                signal.addTerm(t_n);
+            }
+            Literal s1 = Literal.parseLiteral("self");
+            Literal s2 = Literal.parseLiteral("signal");
+            Term[] signal_list = {s1, s2, signal};
+            try{
+                InternalAction signal_f = getIA(".send");
+                signal_f.execute(ts, un, signal_list);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        } else if ( type.equals("sight") ){
+            JSONObject m = log.getJSONObject("msg");
+            JSONArray sights = m.getJSONArray("sights");
+            for ( int i=0; i<sights.length(); i++ ){
+                String sight = sights.getString(i);
+                Literal sight_literal = Literal.parseLiteral("sight");
+                sight_literal.addTerm(Literal.parseLiteral(sight));
+                try {
+                    addBel(sight_literal);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -16,6 +16,7 @@ var rotating = false
 var saw = {}
 
 @onready var nav = $NavigationAgent3D
+#@onready var animation_player = $AnimationPlayer
 
 func log_message(message):
 	print("[LOG]\t", Time.get_time_string_from_system() + " " + message)
@@ -27,6 +28,7 @@ func _ready():
 	if tcp_server.listen(PORT) != OK:
 		err_message("Unable to start server.")
 		set_process(false)
+	#$AnimationPlayer.animation_finished("Walking_A").connect(_on_animation_finished)
 
 
 func _physics_process(delta):
@@ -44,9 +46,9 @@ func _physics_process(delta):
 		while ws.get_available_packet_count():
 			var msg = ws.get_packet().get_string_from_ascii()
 			log_message(msg)
-			ws.send_text("prova")
-			#var idea = JSON.parse_string(msg)
-			#manage(idea)
+			#ws.send_text("prova")
+			var idea = JSON.parse_string(msg)
+			manage(idea)
 	
 	see()
 
@@ -101,11 +103,12 @@ func see():
 				var obj_name = compute_obj_name(obj)
 				obj_names.append(obj_name)
 				sights.append(obj_name)
-		var perception = {'sender': 'body', 'receiver': 'vesna', 'perception': 'sight', 'data': {'sights': sights}}
-		log_message(sights)
-		log_message(JSON.stringify(perception))
+		#var perception = {'sender': 'body', 'receiver': 'vesna', 'type': 'sight', 'data': {'sights': sights}}
+		var msg = {'sights': sights}
+		var log = {'sender': 'body', 'receiver': 'vesna', 'type': 'sight', 'msg': msg}
+		log_message(JSON.stringify(log))
 		# Send the message to the mind
-		ws.send_text(JSON.stringify(perception))
+		ws.send_text(JSON.stringify(log))
 				
 	
 	seeing = false
@@ -115,13 +118,13 @@ func manage_rotate(idea):
 		pass
 	rotating = true
 	var target_position = Vector3(0.0, 0.0, 0.0)
-	if (idea["data"]["direction"] == "right"):
+	if (idea["data"]["target"] == "right"):
 		target_position = global_position + Vector3(1.0, 0.0, 0.0)
-	elif (idea["data"]["direction"] == "left"):
+	elif (idea["data"]["target"] == "left"):
 		target_position = global_position + Vector3(-1.0, 0.0, 0.0)
-	elif (idea["data"]["direction"] == "up"):
+	elif (idea["data"]["target"] == "forward"):
 		target_position = global_position + Vector3(0.0, 0.0, -1.0)
-	elif (idea["data"]["direction"] == "down"):
+	elif (idea["data"]["target"] == "down"):
 		target_position = global_position + Vector3(0.0, 0.0, 1.0)
 	look_at(target_position)
 	print("[ROT]\t", rotation)
@@ -137,7 +140,16 @@ func manage_move(idea):
 		print('I look for a random position')
 	else:
 		print('I look for ', target)
-	#$AnimationPlayer.play("Walking_A")
+	$AnimationPlayer.play("Walking_A")
+	#animation_player.animation_finished("Walking_A").connect(_on_animation_finished)
+	$AnimationPlayer.connect("animation_finished", _on_animation_finished)
+	
+func _on_animation_finished(animation_name):
+	if (animation_name == "Walking_A"):
+		print("Animation finished!")
+		var msg = {'functor': 'done', 'terms': ['walk']}
+		var log = {'sender': 'body', 'receiver': 'vesna', 'type': 'signal', 'msg': msg}
+		ws.send_text(JSON.stringify(log))
 	
 func manage_goto(idea):
 	while(seeing):
@@ -158,13 +170,13 @@ func send_position(pos):
 	ws.send_text(JSON.stringify(perception))
 
 func manage(idea):
-	if (idea["action"] == "rotate"):
+	if (idea["type"] == "rotate"):
 		manage_rotate(idea)
-	if (idea["action"] == "move"):
+	if (idea["type"] == "walk"):
 		manage_move(idea)
-	if (idea["action"] == "goto"):
+	if (idea["type"] == "goto"):
 		pass
-	if (idea["action"] == "request"):
+	if (idea["type"] == "request"):
 		manage_requests(idea)
 	#ws.send_text("{}")
 	
