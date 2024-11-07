@@ -1,182 +1,154 @@
 extends CharacterBody3D
 
-# The port we will listen to.
+var speed = 6
+var acceleration = 10
+
 const PORT = 9080
 var tcp_server := TCPServer.new()
 var ws := WebSocketPeer.new()
 
-var move_flag = false
-var json = JSON.new()
+@onready var navigator : NavigationAgent3D = $NavigationAgent3D
+@onready var animator : AnimationPlayer = $AnimationPlayer
+@onready var front_sight : Area3D = $Rig/Skeleton3D/Rogue_Head_Hooded/FrontalView
+@onready var lateral_sight : Area3D = $Rig/Skeleton3D/Rogue_Head_Hooded/LateralView
+@onready var space : PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+@onready var mesh : NavigationMesh = get_node("/root/Node3D/NavigationRegion3D").navigation_mesh
 
-var old_position = Vector3(0, 0, 0)
-var old_rotation = Vector3(0, 0, 0)
-var rot = "up"
-var seeing = false
-var rotating = false
-var saw = {}
+var old_region = -1
+var end_communication = true
 
-@onready var nav = $NavigationAgent3D
-#@onready var animation_player = $AnimationPlayer
-
-func log_message(message):
-	print("[LOG]\t", Time.get_time_string_from_system() + " " + message)
-
-func err_message(message):
-	print("[ERR]\t", Time.get_time_string_from_system() + " " + message)
-
-func _ready():
-	if tcp_server.listen(PORT) != OK:
-		err_message("Unable to start server.")
-		set_process(false)
-	#$AnimationPlayer.animation_finished("Walking_A").connect(_on_animation_finished)
+func _ready() -> void:
+	if tcp_server.listen( PORT ) != OK:
+		Log.err( "Unable to start the server." )
+		set_process( false )
+	front_sight.connect( 'body_entered', _on_area_body_entered )
+	lateral_sight.connect( 'body_entered', _on_area_body_entered )
 
 
-func _physics_process(delta):
-	if $AnimationPlayer.is_playing():
-		translate(-Vector3.FORWARD * delta)
-		
+func _physics_process( delta: float ) -> void:
 	while tcp_server.is_connection_available():
-		var conn: StreamPeerTCP = tcp_server.take_connection()
-		assert(conn != null)
-		ws.accept_stream(conn)
-
+		var conn : StreamPeerTCP = tcp_server.take_connection()
+		assert( conn != null)
+		ws.accept_stream( conn )
+	
 	ws.poll()
-
+	
 	if ws.get_ready_state() == WebSocketPeer.STATE_OPEN:
 		while ws.get_available_packet_count():
-			var msg = ws.get_packet().get_string_from_ascii()
-			log_message(msg)
-			#ws.send_text("prova")
-			var idea = JSON.parse_string(msg)
-			manage(idea)
+			var msg : String = ws.get_packet().get_string_from_ascii()
+			Log.info("Received message ", msg)
+			var intention : Dictionary = JSON.parse_string( msg )
+			manage( intention )
+		
+		update_region()
 	
-	see()
-
-func _exit_tree():
+	if navigator.is_navigation_finished():
+		if not end_communication:
+			var msg = {"type": "inform", "code": "gained"}
+			ws.send_text(JSON.stringify(msg))
+			end_communication = true
+		return
+	
+	var direction = Vector3()
+	direction = navigator.get_next_path_position() - global_position
+	direction = direction.normalized()
+	
+	velocity = velocity.lerp(direction * speed, acceleration * delta)
+	
+	move_and_slide()
+	
+	
+func _exit_tree() -> void:
 	ws.close()
 	tcp_server.stop()
 	
-		
-func compute_obj_name(obj):
-	var obj_str = obj.name.left(-1)
-	var room_n = obj.get_parent().name.right(1)
-	var obj_n = obj.name.right(1)
-	return obj_str + room_n + obj_n
-
-func see():
-	# There are some interesting situations in which the actor should not "perceive" objects to not overflow:
-	#	- if it didn't move (equals rotation and position)
-	#	- if it is moving (otherwise it will send a message at each frame!)
-	#	- if it is rotating (there could be errors with misplaced objects in the brain)
-	if (rotation == old_rotation and position == old_position) or $AnimationPlayer.is_playing() or rotating:
-		return
-	
-	# A semaphor: when it's true don't do anything else, otherwise the position and rotation
-	# could cause problems updating while seeing.
-	seeing = true
-	# Store the updated values of rotation and position
-	old_rotation = rotation
-	old_position = position
-	
-	# Get the sight and lateral sight nodes
-	var sight = $Rig/Skeleton3D/Rogue_Head_Hooded/FrontalView
-	var lateral_sight = $Rig/Skeleton3D/Rogue_Head_Hooded/LateralView
-	
-	# Get all the frontal overlapping bodies
-	var objects = sight.get_overlapping_bodies()
-	objects.erase(self)
-	# Get all the lateral overlapping bodies
-	var lateral_objects = lateral_sight.get_overlapping_bodies()
-	lateral_objects.erase(self)
-	# Concatenate lists
-	objects.append_array(lateral_objects)
-	
-	var obj_names = []
-	
-	if len(objects) > 0:
-		var space_state = get_world_3d().direct_space_state
-		var sights = []
-		for obj in objects:
-			# Compute the vector from sight to object and check intersection to check occlusions
-			var target_vector = PhysicsRayQueryParameters3D.create(sight.global_position, obj.global_position - sight.global_position)
-			if space_state.intersect_ray(target_vector):
-				var obj_name = compute_obj_name(obj)
-				obj_names.append(obj_name)
-				sights.append(obj_name)
-		#var perception = {'sender': 'body', 'receiver': 'vesna', 'type': 'sight', 'data': {'sights': sights}}
-		var msg = {'sights': sights}
-		var log = {'sender': 'body', 'receiver': 'vesna', 'type': 'sight', 'msg': msg}
-		log_message(JSON.stringify(log))
-		# Send the message to the mind
-		ws.send_text(JSON.stringify(log))
-				
-	
-	seeing = false
-
-func manage_rotate(idea):
-	while(seeing):
-		pass
-	rotating = true
-	var target_position = Vector3(0.0, 0.0, 0.0)
-	if (idea["data"]["target"] == "right"):
-		target_position = global_position + Vector3(1.0, 0.0, 0.0)
-	elif (idea["data"]["target"] == "left"):
-		target_position = global_position + Vector3(-1.0, 0.0, 0.0)
-	elif (idea["data"]["target"] == "forward"):
-		target_position = global_position + Vector3(0.0, 0.0, -1.0)
-	elif (idea["data"]["target"] == "down"):
-		target_position = global_position + Vector3(0.0, 0.0, 1.0)
-	look_at(target_position)
-	print("[ROT]\t", rotation)
-	await get_tree().create_timer(0.5).timeout
-	rotating = false
-		
-func manage_move(idea):
-	while(seeing):
-		pass
-	var data = idea['data']
-	var target = data['target']
-	if target == 'random':
-		print('I look for a random position')
-	else:
-		print('I look for ', target)
-	$AnimationPlayer.play("Walking_A")
-	#animation_player.animation_finished("Walking_A").connect(_on_animation_finished)
-	$AnimationPlayer.connect("animation_finished", _on_animation_finished)
-	
-func _on_animation_finished(animation_name):
-	if (animation_name == "Walking_A"):
-		print("Animation finished!")
-		var msg = {'functor': 'done', 'terms': ['walk']}
-		var log = {'sender': 'body', 'receiver': 'vesna', 'type': 'signal', 'msg': msg}
-		ws.send_text(JSON.stringify(log))
-	
-func manage_goto(idea):
-	while(seeing):
-		pass
-	
-func manage_requests(idea):
-	if idea["data"]["information"] == "position":
-		if (idea["data"]["object"] == "me"):
-			send_position(position)
-		elif (idea["data"]["object"] == "door"):
-			var door = get_tree().get_current_scene().get_node("Room1/Wall_Doorway2").position
-			send_position(door)
+func _on_area_body_entered( body ):
+	var sight : Dictionary = {}
+	sight[ 'sender' ]  = 'body'
+	sight[ 'receiver' ] = 'vesna'
+	sight[ 'type' ] = 'sight'
+	var obj : Dictionary = {}
+	obj[ 'sight' ] = body
+	sight[ 'data' ] = obj
+	Log.info( 'Sight ', sight )
+	ws.send_text( JSON.stringify( sight ) )
 			
+func manage( intention ):
+	var sender : String = intention['sender']
+	var receiver : String = intention['receiver']
+	var type : String = intention['type']
+	var data : Dictionary = intention['data']
+	if type == 'walk':
+		var target : String = data['target']
+		walk( target )
+		
+func walk( target ):
+	Log.info("I have to move ", target)
+	if target == 'random':
+		navigator.set_target_position(position + Vector3(0.0, 0.0, 15.0))
 	
-func send_position(pos):
-	var perception = {"perception": "position", "data": {"x": pos[0], "y": pos[2]}}
-	print("sending position ", pos)
-	ws.send_text(JSON.stringify(perception))
+func update_region() -> void:
+	var current_region : int = get_current_region()
+	if current_region != old_region:
+		var rcc : Dictionary = {}
+		rcc[ 'sender' ] = 'body'
+		rcc[ 'receiver' ] = 'vesna'
+		rcc[ 'type' ] = 'rcc'
+		var data : Dictionary = {}
+		data[ 'current' ] = current_region
+		rcc[ 'data' ] = data
+		ws.send_text(JSON.stringify(rcc))
+		old_region = current_region
 
-func manage(idea):
-	if (idea["type"] == "rotate"):
-		manage_rotate(idea)
-	if (idea["type"] == "walk"):
-		manage_move(idea)
-	if (idea["type"] == "goto"):
-		pass
-	if (idea["type"] == "request"):
-		manage_requests(idea)
-	#ws.send_text("{}")
+## MESH FUNCTIONS
+func nearest_vertex(v: Array) -> int:
+	var pos = position
+	var nearest : Vector3 = v[0]
+	var nearest_idx : int = 0
+	var min_dist : float = pos.distance_to(nearest)
 	
+	for i in len( v ):
+		var dist = pos.distance_to(v[i])
+		if dist < min_dist:
+			nearest = v[i]
+			nearest_idx = i
+			min_dist = dist
+	return nearest_idx
+
+func triangles_with_vertex( idx : int ) -> Array:
+	var adjs : Array = []
+	for i in range( mesh.get_polygon_count() ):
+		if ( idx in mesh.get_polygon(i) ):
+			adjs.append(i)
+	return adjs
+
+func triangle_contains_me( t_idx : int ) -> bool:
+	var v_idxs = mesh.get_polygon(t_idx)
+	var t = []
+	for v_idx in v_idxs:
+		t.append( mesh.get_vertices()[v_idx] )
+	var pos = position
+	pos[1] = 0.0
+	var ab = t[1] - t[0]
+	var ac = t[2] - t[0]
+	var ap = pos - t[0]
+	
+	var dot00 = ab.dot(ab)
+	var dot01 = ab.dot(ac)
+	var dot02 = ab.dot(ap)
+	var dot11 = ac.dot(ac)
+	var dot12 = ac.dot(ap)
+	
+	var inv_den = 1.0 / (dot00 * dot11 - dot01 * dot01)
+	var u = (dot11 * dot02 -dot01 * dot12) * inv_den
+	var v = (dot00 * dot12 - dot01 * dot02) * inv_den
+	return u >= 0 and v >= 0 and (u + v) <= 1
+
+func get_current_region() -> int:
+	var vertices = mesh.get_vertices()
+	var idx : int = nearest_vertex(vertices)
+	var adj_triangles : Array = triangles_with_vertex(idx)
+	for i in adj_triangles:
+		if triangle_contains_me(i):
+			return i
+	return -1

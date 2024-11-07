@@ -82,6 +82,16 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
                     e.printStackTrace();
                 }
             }
+        } else if ( type.equals("rcc") ){
+            JSONObject data = log.getJSONObject("data");
+            int region = data.getInt("current");
+            Literal rcc = Literal.parseLiteral("rcc");
+            rcc.addTerm(ASSyntax.parseNumber(Integer.toString(region)));
+            try {
+                addBel( rcc );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

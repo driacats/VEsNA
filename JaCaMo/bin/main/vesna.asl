@@ -27,5 +27,10 @@ current_region(undefined).
     <-  -sight(Object);
         +ntpp(Object, Region).
 
++rcc(SubRegion)
+    :   current_region(Region)
+    <-  -rcc(SubRegion);
+        +ntpp(SubRegion, Region).
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
