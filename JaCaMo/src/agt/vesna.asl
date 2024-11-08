@@ -32,5 +32,8 @@ current_region(undefined).
     <-  -rcc(SubRegion);
         +ntpp(SubRegion, Region).
 
++prova
+    <- .print("Prova!").
+
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

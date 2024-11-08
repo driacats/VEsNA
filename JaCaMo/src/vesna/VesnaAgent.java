@@ -42,6 +42,39 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         client.send(action);
     }
 
+    private void handle_event(TransitionSystem ts, Unifier un, JSONObject event) {
+        String event_type = event.getString("type");
+        String event_status = event.getString("status");
+        String event_reason = event.getString("reason");
+        try {
+            InternalAction signal = getIA(".signal");
+            Term[] event_list = {ASSyntax.createString("+prova")};
+            signal.execute(ts, un, event_list);
+        } catch( Exception e ){
+            e.printStackTrace();
+        }
+    }
+
+    private void handle_sight(TransitionSystem ts, Unifier un, JSONObject sight) {
+        String object = sight.getString("sight");
+        Literal sight_belief = ASSyntax.createLiteral("sight", ASSyntax.createLiteral(object));
+        try {
+            addBel(sight_belief);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void handle_rcc(TransitionSystem ts, Unifier un, JSONObject rcc) {
+        int region = rcc.getInt("current");
+        Literal rcc_belief = ASSyntax.createLiteral("rcc", ASSyntax.createNumber(region));
+        try {
+            addBel( rcc_belief );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void handleMsg(String msg){
         JSONObject log = new JSONObject(msg);
@@ -50,46 +83,13 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         String type = log.getString("type");
         TransitionSystem ts = getTS();
         Unifier un = new Unifier();
+        JSONObject data = log.getJSONObject("data");
         if ( type.equals( "signal" ) ) {
-            JSONObject sig = log.getJSONObject("msg");
-            String functor = sig.getString("functor");
-            Literal signal = Literal.parseLiteral(functor);
-            JSONArray terms = sig.getJSONArray("terms");
-            for (int i=0; i<terms.length(); i++){
-                String t = terms.getString(i);
-                Literal t_n = Literal.parseLiteral(t);
-                signal.addTerm(t_n);
-            }
-            Literal s1 = Literal.parseLiteral("self");
-            Literal s2 = Literal.parseLiteral("signal");
-            Term[] signal_list = {s1, s2, signal};
-            try{
-                InternalAction signal_f = getIA(".send");
-                signal_f.execute(ts, un, signal_list);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+            handle_event(ts, un, data);
         } else if ( type.equals("sight") ){
-            JSONObject data = log.getJSONObject("data");
-//            JSONArray sights = data.getJSONArray("sight");
-            String sight = data.getString("sight");
-            Literal sight_lit = Literal.parseLiteral("sight");
-            sight_lit.addTerm(Literal.parseLiteral(sight));
-            try {
-                addBel(sight_lit);
-            } catch (Exception e){
-                e.printStackTrace();
-            }
+            handle_sight(ts, un, data);
         } else if ( type.equals("rcc") ){
-            JSONObject data = log.getJSONObject("data");
-            int region = data.getInt("current");
-            Literal rcc = Literal.parseLiteral("rcc");
-            rcc.addTerm(ASSyntax.parseNumber(Integer.toString(region)));
-            try {
-                addBel( rcc );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            handle_rcc(ts, un, data);
         }
     }
 

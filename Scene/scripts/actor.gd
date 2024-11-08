@@ -44,8 +44,17 @@ func _physics_process( delta: float ) -> void:
 	
 	if navigator.is_navigation_finished():
 		if not end_communication:
-			var msg = {"type": "inform", "code": "gained"}
-			ws.send_text(JSON.stringify(msg))
+			Log.info("Navigation finished")
+			var log : Dictionary = {}
+			log[ 'sender' ] = 'body'
+			log[ 'receiver' ] = 'vesna'
+			log[ 'type' ] = 'signal'
+			var msg : Dictionary = {}
+			msg[ 'type' ] = 'movement'
+			msg[ 'status' ] = 'completed'
+			msg[ 'reason' ] = 'destination_reached'
+			log[ 'data' ] = msg
+			ws.send_text(JSON.stringify(log))
 			end_communication = true
 		return
 	
@@ -86,7 +95,8 @@ func manage( intention ):
 func walk( target ):
 	Log.info("I have to move ", target)
 	if target == 'random':
-		navigator.set_target_position(position + Vector3(0.0, 0.0, 15.0))
+		navigator.set_target_position(position + Vector3(0.0, 0.0, 8.0))
+		end_communication = false
 	
 func update_region() -> void:
 	var current_region : int = get_current_region()
