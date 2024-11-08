@@ -4,7 +4,7 @@ mas vesna {
         beliefs:    address(localhost)
                     port(9080)
         goals:      start
-        ag-class:   vesna.EmbodiedAgent
+        ag-class:   vesna.VesnaAgent
     }
     
 }

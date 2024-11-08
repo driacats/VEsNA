@@ -15,7 +15,7 @@ import jason.runtime.Settings;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
+public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private WsClient client;
 
@@ -70,17 +70,15 @@ public class EmbodiedAgent extends Agent implements WsClientMsgHandler{
                 e.printStackTrace();
             }
         } else if ( type.equals("sight") ){
-            JSONObject m = log.getJSONObject("msg");
-            JSONArray sights = m.getJSONArray("sights");
-            for ( int i=0; i<sights.length(); i++ ){
-                String sight = sights.getString(i);
-                Literal sight_literal = Literal.parseLiteral("sight");
-                sight_literal.addTerm(Literal.parseLiteral(sight));
-                try {
-                    addBel(sight_literal);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+            JSONObject data = log.getJSONObject("data");
+//            JSONArray sights = data.getJSONArray("sight");
+            String sight = data.getString("sight");
+            Literal sight_lit = Literal.parseLiteral("sight");
+            sight_lit.addTerm(Literal.parseLiteral(sight));
+            try {
+                addBel(sight_lit);
+            } catch (Exception e){
+                e.printStackTrace();
             }
         } else if ( type.equals("rcc") ){
             JSONObject data = log.getJSONObject("data");

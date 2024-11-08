@@ -11,7 +11,7 @@ public class walk extends DefaultInternalAction {
     @Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] args) throws Exception {
 
-        EmbodiedAgent ag = (EmbodiedAgent) ts.getAg();
+        VesnaAgent ag = (VesnaAgent) ts.getAg();
 
         JSONObject action = new JSONObject();
         action.put( "sender", "agent" );
