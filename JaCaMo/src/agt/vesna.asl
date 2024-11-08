@@ -32,8 +32,12 @@ current_region(undefined).
     <-  -rcc(SubRegion);
         +ntpp(SubRegion, Region).
 
-+prova
-    <- .print("Prova!").
++movement(Status, Reason)
+    :   true
+    <-  .print("Movement is ", Status, " with reason ", Reason).
+
++movement
+    <- .print("Movement").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

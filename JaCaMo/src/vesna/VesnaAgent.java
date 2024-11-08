@@ -48,7 +48,9 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         String event_reason = event.getString("reason");
         try {
             InternalAction signal = getIA(".signal");
-            Term[] event_list = {ASSyntax.createString("+prova")};
+            Literal event_literal = ASSyntax.createLiteral(event_type, ASSyntax.createLiteral(event_status), ASSyntax.createLiteral(event_reason));
+            StringTerm type = ASSyntax.createString("+" + event_literal.toString());
+            Term[] event_list = new Term[] {type};
             signal.execute(ts, un, event_list);
         } catch( Exception e ){
             e.printStackTrace();

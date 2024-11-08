@@ -11,6 +11,7 @@ var ws := WebSocketPeer.new()
 @onready var animator : AnimationPlayer = $AnimationPlayer
 @onready var front_sight : Area3D = $Rig/Skeleton3D/Rogue_Head_Hooded/FrontalView
 @onready var lateral_sight : Area3D = $Rig/Skeleton3D/Rogue_Head_Hooded/LateralView
+@onready var head = $Rig/Skeleton3D/Rogue_Head_Hooded
 @onready var space : PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 @onready var mesh : NavigationMesh = get_node("/root/Node3D/NavigationRegion3D").navigation_mesh
 
@@ -44,7 +45,6 @@ func _physics_process( delta: float ) -> void:
 	
 	if navigator.is_navigation_finished():
 		if not end_communication:
-			Log.info("Navigation finished")
 			var log : Dictionary = {}
 			log[ 'sender' ] = 'body'
 			log[ 'receiver' ] = 'vesna'
@@ -54,6 +54,7 @@ func _physics_process( delta: float ) -> void:
 			msg[ 'status' ] = 'completed'
 			msg[ 'reason' ] = 'destination_reached'
 			log[ 'data' ] = msg
+			Log.info("Motion ", JSON.stringify(log))
 			ws.send_text(JSON.stringify(log))
 			end_communication = true
 		return
@@ -72,16 +73,20 @@ func _exit_tree() -> void:
 	tcp_server.stop()
 	
 func _on_area_body_entered( body ):
-	# TODO: check raycast!!
-	var sight : Dictionary = {}
-	sight[ 'sender' ]  = 'body'
-	sight[ 'receiver' ] = 'vesna'
-	sight[ 'type' ] = 'sight'
-	var obj : Dictionary = {}
-	obj[ 'sight' ] = body
-	sight[ 'data' ] = obj
-	Log.info( 'Sight ', sight )
-	ws.send_text( JSON.stringify( sight ) )
+	
+	var space = get_world_3d().direct_space_state
+	var ray = PhysicsRayQueryParameters3D.create(head.global_position, head.global_position - head.global_position)
+	if space.intersect_ray( ray ):
+		var sight : Dictionary = {}
+		sight[ 'sender' ]  = 'body'
+		sight[ 'receiver' ] = 'vesna'
+		sight[ 'type' ] = 'sight'
+		var obj : Dictionary = {}
+		obj[ 'sight' ] = body.name
+		obj[ 'id' ] = body.get_instance_id()
+		sight[ 'data' ] = obj
+		Log.info( 'Sight ', sight )
+		ws.send_text( JSON.stringify( sight ) )
 			
 func manage( intention ):
 	var sender : String = intention['sender']
