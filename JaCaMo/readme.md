@@ -1,41 +1,53 @@
-# VEsNA Threasure Hunt
+# VEsNA
 
 JSON formatted messages.
 
-Agent -> Body:
-Actions
-    - walk
-        - reach a region
-        - random
+## Vesna2Body
 
+### Move
+
+```json
 {
-    'sender': AgentName,
-    'receiver': BodyName,
-    'action': Action,
-    'data': {
-        'target': RegionName / random
+    "sender": "vesna",
+    "receiver": "body",
+    "type": "walk",
+    "data": {
+        "target": "random"
     }
 }
+```
 
-Body -> Agent:
-Perceptions
-    - sight
-    - task accomplished
+`target` can be either `random` either a **region name** to reach.
 
+## Body2Vesna
+
+### Sight
+
+```json
 {
-    'sender': BodyName,
-    'receiver': AgentName,
-    'perception': sight,
-    'data': {
-        'sights': [...]
+    "sender": "body",
+    "receiver": "vesna",
+    "type": "sight",
+    "data": {
+        "sight": obj_name
     }
 }
+```
 
+This message should be sent inside a `_on_collision_enter()` function of the sight. When an object collides check raycast and if necessary send it.
+
+### Region Connection Calculus
+
+```json
 {
-    'sender': BodyName,
-    'receiver': AgentName,
-    'perception': task,
-    'data': {
-        'status': 'accomplished'/'ongoing'/'todo'
+    "sender": "body",
+    "receiver": "vesna",
+    "type": "rcc",
+    "data": {
+        "current": current_triangle
     }
 }
+```
+
+The `current_triangle` is the current triangle in the NavigationMesh.
+

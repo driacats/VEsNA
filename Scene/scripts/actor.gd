@@ -63,6 +63,7 @@ func _exit_tree() -> void:
 	tcp_server.stop()
 	
 func _on_area_body_entered( body ):
+	# TODO: check raycast!!
 	var sight : Dictionary = {}
 	sight[ 'sender' ]  = 'body'
 	sight[ 'receiver' ] = 'vesna'
