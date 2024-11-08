@@ -11,9 +11,15 @@ current_region(undefined).
     <-  .print("I found ", Object, " here!").
 
 +!find(Object)
+    :   current_region(Region) & po(Region, door)
+    <-  vesna.walk(door);
+        .wait({+movement(completed, destination_reached)}).
+
++!find(Object)
     :   current_region(Region)
     <-  vesna.walk(random);
-        .wait({+done(walk)});.
+        .wait({+movement(completed, destination_reached)});
+        .print("Ok, let's go").
         //!find(Object).
 
 +sight(door)
@@ -31,13 +37,6 @@ current_region(undefined).
     :   current_region(Region)
     <-  -rcc(SubRegion);
         +ntpp(SubRegion, Region).
-
-+movement(Status, Reason)
-    :   true
-    <-  .print("Movement is ", Status, " with reason ", Reason).
-
-+movement
-    <- .print("Movement").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }
