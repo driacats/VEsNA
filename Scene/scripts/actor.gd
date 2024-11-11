@@ -95,12 +95,18 @@ func manage( intention ):
 	var data : Dictionary = intention['data']
 	if type == 'walk':
 		var target : String = data['target']
-		walk( target )
+		var id : int = data['id']
+		walk( target, id )
 		
-func walk( target ):
+func walk( target, id ):
 	Log.info("I have to move ", target)
 	if target == 'random':
 		navigator.set_target_position(position + Vector3(0.0, 0.0, 8.0))
+		end_communication = false
+	if target == 'door':
+		print(id)
+		var door_node = instance_from_id(id)
+		navigator.set_target_position( door_node.position )
 		end_communication = false
 	
 func update_region() -> void:

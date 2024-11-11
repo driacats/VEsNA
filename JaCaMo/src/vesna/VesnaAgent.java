@@ -14,10 +14,12 @@ import jason.runtime.Settings;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.AsynchronousServerSocketChannel;
 
 public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private WsClient client;
+    private RCCMap rcc_map;
 
     @Override
     public void loadInitialAS(String asSrc) throws Exception{
@@ -36,6 +38,8 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         client = new WsClient(full_addr);
         client.setMsgHandler(this::handleMsg);
         client.connect();
+
+        rcc_map = new RCCMap();
     }
 
     public void act(String action) {
@@ -59,7 +63,8 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private void handle_sight(TransitionSystem ts, Unifier un, JSONObject sight) {
         String object = sight.getString("sight");
-        Literal sight_belief = ASSyntax.createLiteral("sight", ASSyntax.createLiteral(object));
+        long id = sight.getLong("id");
+        Literal sight_belief = ASSyntax.createLiteral("sight", ASSyntax.createLiteral(object), ASSyntax.createNumber(id));
         try {
             addBel(sight_belief);
         } catch (Exception e){
@@ -69,12 +74,21 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private void handle_rcc(TransitionSystem ts, Unifier un, JSONObject rcc) {
         int region = rcc.getInt("current");
-        Literal rcc_belief = ASSyntax.createLiteral("rcc", ASSyntax.createNumber(region));
-        try {
-            addBel( rcc_belief );
-        } catch (Exception e) {
+        Unifier regionUnifier = new Unifier();
+        try{
+            believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
+//            int current_region = (int) ((NumberTerm)regionUnifier.get("X")).solve();
+            String current_region = regionUnifier.get("X").toString();
+            System.out.println(current_region);
+        } catch (Exception e){
             e.printStackTrace();
         }
+        // Literal rcc_belief = ASSyntax.createLiteral("rcc", ASSyntax.createNumber(region));
+        // try {
+        //     addBel( rcc_belief );
+        // } catch (Exception e) {
+        //     e.printStackTrace();
+        // }
     }
 
     @Override
