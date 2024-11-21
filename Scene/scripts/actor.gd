@@ -102,22 +102,25 @@ func walk( target, id ):
 	Log.info("I have to move ", target)
 	if target == 'random':
 		navigator.set_target_position(position + Vector3(0.0, 0.0, 8.0))
-		end_communication = false
+	if target == 'triangle':
+		navigator.set_target_position( get_triangle_center(id) )
 	if target == 'door':
 		print(id)
 		var door_node = instance_from_id(id)
 		navigator.set_target_position( door_node.position )
-		end_communication = false
+	end_communication = false
 	
 func update_region() -> void:
 	var current_region : int = get_current_region()
-	if current_region != old_region:
+	if current_region != old_region and current_region != -1:
+		var adj_triangles = get_adj_triangles(current_region)
 		var rcc : Dictionary = {}
 		rcc[ 'sender' ] = 'body'
 		rcc[ 'receiver' ] = 'vesna'
 		rcc[ 'type' ] = 'rcc'
 		var data : Dictionary = {}
 		data[ 'current' ] = current_region
+		data[ 'adjs' ] = adj_triangles
 		rcc[ 'data' ] = data
 		ws.send_text(JSON.stringify(rcc))
 		old_region = current_region
@@ -143,6 +146,30 @@ func triangles_with_vertex( idx : int ) -> Array:
 		if ( idx in mesh.get_polygon(i) ):
 			adjs.append(i)
 	return adjs
+	
+func get_adj_triangles( triangle_idx : int ) -> Array:
+	var current = mesh.get_polygon( triangle_idx )
+	var adj_triangles : Array = []
+	for i in range( mesh.get_polygon_count() ):
+		var tr_i = mesh.get_polygon(i)
+		if ( current[0] in tr_i ):
+			adj_triangles.append(i)
+		elif ( current[1] in tr_i ):
+			adj_triangles.append(i)
+		elif ( current[2] in tr_i ):
+			adj_triangles.append(i)
+	adj_triangles.erase(triangle_idx)
+	return adj_triangles
+		
+func get_triangle_center( t_idx : int ) -> Vector3:
+	var v_idxs : Array = mesh.get_polygon(t_idx)
+	var a : Vector3 = mesh.get_vertices()[v_idxs[0]]
+	var b : Vector3 = mesh.get_vertices()[v_idxs[1]]
+	var c : Vector3 = mesh.get_vertices()[v_idxs[2]]
+	var center_x = ( a[0] + b[0] + c[0] ) / 3
+	var center_y = 0.0
+	var center_z = ( a[2] + b[2] + c[2] ) / 3
+	return Vector3(center_x, center_y, center_z)
 
 func triangle_contains_me( t_idx : int ) -> bool:
 	var v_idxs = mesh.get_polygon(t_idx)

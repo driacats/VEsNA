@@ -4,6 +4,7 @@ import jason.architecture.AgArch;
 import jason.asSemantics.*;
 import jason.asSyntax.*;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,7 +20,7 @@ import java.nio.channels.AsynchronousServerSocketChannel;
 public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private WsClient client;
-    private RCCMap rcc_map;
+    public RCCMap rccMap;
 
     @Override
     public void loadInitialAS(String asSrc) throws Exception{
@@ -39,7 +40,7 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         client.setMsgHandler(this::handleMsg);
         client.connect();
 
-        rcc_map = new RCCMap();
+        rccMap = new RCCMap();
     }
 
     public void act(String action) {
@@ -74,21 +75,24 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private void handle_rcc(TransitionSystem ts, Unifier un, JSONObject rcc) {
         int region = rcc.getInt("current");
+        JSONArray adjs = rcc.getJSONArray("adjs");
+        ArrayList<Integer> adjs_int = new ArrayList<Integer>();
+        for (int i = 0; i<adjs.length(); i++ )
+            adjs_int.add(adjs.getInt(i));
+        rccMap.addAdjsToTriangle(region, adjs_int);
+
         Unifier regionUnifier = new Unifier();
         try{
             believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
-//            int current_region = (int) ((NumberTerm)regionUnifier.get("X")).solve();
             String current_region = regionUnifier.get("X").toString();
             System.out.println(current_region);
+            System.out.println(rccMap.isTriangleExplored(ASSyntax.parseLiteral(current_region), region));
+            rccMap.addTriangle(ASSyntax.parseLiteral(current_region), region);
+            rccMap.updateCurrent(region);
+            rccMap.printMap();
         } catch (Exception e){
             e.printStackTrace();
         }
-        // Literal rcc_belief = ASSyntax.createLiteral("rcc", ASSyntax.createNumber(region));
-        // try {
-        //     addBel( rcc_belief );
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
     }
 
     @Override

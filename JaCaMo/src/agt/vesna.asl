@@ -3,7 +3,8 @@ region_counter(0).
 
 +!start
     :   true
-    <-  .print("Starting actor");
+    <-  .wait(2000);
+        .print("Starting actor");
         !find(prova).
 
 +!find(Object)
@@ -11,14 +12,18 @@ region_counter(0).
     <-  .print("I found ", Object, " here!").
 
 +!find(Object)
-    :   current_region(Region) & po(Region, door(Id)) & po(door(Id), OtherRegion)
-    <-  vesna.walk(door, Id);
+    :   current_region(Region) & po(Region, door(Id)) & po(door(Id), OtherRegion) & not iAmAtDoor
+    <-  .print("I found a door, go for it");
+        vesna.walk(door, Id);
         .wait({+movement(completed, destination_reached)});
+        +iAmAtDoor(Id);
+        -+current_region(OtherRegion);
         !find(Object).
 
 +!find(Object)
     :   current_region(Region)
-    <-  vesna.walk(random);
+    <-  .print("I don't know where to go, random move!");
+        vesna.walk(triangle);
         .wait({+movement(completed, destination_reached)});
         !find(Object).
 
