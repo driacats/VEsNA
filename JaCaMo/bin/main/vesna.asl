@@ -3,7 +3,8 @@ region_counter(0).
 
 +!start
     :   true
-    <-  .print("Starting actor");
+    <-  .wait(2000);
+        .print("Starting actor");
         !find(prova).
 
 +!find(Object)
@@ -11,16 +12,36 @@ region_counter(0).
     <-  .print("I found ", Object, " here!").
 
 +!find(Object)
-    :   current_region(Region) & po(Region, door(Id)) & po(door(Id), OtherRegion)
-    <-  vesna.walk(door, Id);
+    :   current_region(Region) & full_explored(Region)
+    <-  .print("I explored completely the room, let's go back to the other room");
+        // TODO: if po(door, Region) o contrario -> tornare alla porta e andare indietro
+        // TODO: meglio implementare tutto questo con DFS o BFS!
+        // vesna.walk(door, Id);
+        // .wait({+movement(completed, destination_reached)});
+        // +iAmAtDoor;
+        // -+current_region(OtherRegion);
+        // !find(Object).
+
++!find(Object)
+    :   current_region(Region) & po(Region, door(Id)) & po(door(Id), OtherRegion) & not iAmAtDoor
+    <-  .print("I found a door, go for it");
+        vesna.walk(door, Id);
         .wait({+movement(completed, destination_reached)});
+        +iAmAtDoor;
+        -+current_region(OtherRegion);
         !find(Object).
 
 +!find(Object)
     :   current_region(Region)
-    <-  vesna.walk(random);
-        .wait({+movement(completed, destination_reached)});
+    <-  .print("I don't know where to go, random move!");
+        if (vesna.walk(triangle)){
+            .wait({+movement(Status, Reason)});
+        };
         !find(Object).
+
++all_triangles_explored
+    :   current_region(Region)
+    <-  +full_explored(Region).
 
 +!add_portal(Id)
     :   portals(_, _)

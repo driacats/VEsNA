@@ -47,16 +47,37 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         client.send(action);
     }
 
+    public void sense( Literal perception ){
+        try {
+            InternalAction signal = getIA(".signal");
+            StringTerm type = ASSyntax.createString("+" + perception.toString());
+            Unifier un = new Unifier();
+            Term[] event_list = new Term[] {type};
+            signal.execute(ts, un, event_list);
+            System.out.println("I sent the signal: " + type.toString());
+        } catch( Exception e ){
+            e.printStackTrace();
+        }
+    }
+
     private void handle_event(TransitionSystem ts, Unifier un, JSONObject event) {
         String event_type = event.getString("type");
         String event_status = event.getString("status");
         String event_reason = event.getString("reason");
         try {
+            int current_t = rccMap.getCurrent();
+            int target_t = rccMap.getTarget();
+            if ( current_t != target_t ){
+                System.out.println("Current target " + target_t + " is different from current triangle " + current_t );
+                rccMap.addNotReachedTriangle(target_t);
+            }
+
             InternalAction signal = getIA(".signal");
             Literal event_literal = ASSyntax.createLiteral(event_type, ASSyntax.createLiteral(event_status), ASSyntax.createLiteral(event_reason));
             StringTerm type = ASSyntax.createString("+" + event_literal.toString());
             Term[] event_list = new Term[] {type};
             signal.execute(ts, un, event_list);
+            System.out.println("I sent the signal!");
         } catch( Exception e ){
             e.printStackTrace();
         }
@@ -83,10 +104,14 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
         Unifier regionUnifier = new Unifier();
         try{
+            System.out.println("[HANDLE RCC] entering");
             believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
+            System.out.println("[HANDLE RCC] got belief");
             String current_region = regionUnifier.get("X").toString();
+            System.out.println("[HANDLE RCC] got value");
             System.out.println(current_region);
             System.out.println(rccMap.isTriangleExplored(ASSyntax.parseLiteral(current_region), region));
+            System.out.println("Triangle contained in region: " + rccMap.getRegionFromTriangle(region));
             rccMap.addTriangle(ASSyntax.parseLiteral(current_region), region);
             rccMap.updateCurrent(region);
             rccMap.printMap();
@@ -97,6 +122,7 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     @Override
     public void handleMsg(String msg){
+        System.out.println(msg);
         JSONObject log = new JSONObject(msg);
         String sender = log.getString("sender");
         String receiver = log.getString("receiver");

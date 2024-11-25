@@ -42,6 +42,7 @@ sourceSets {
             srcDir 'src/env'
             srcDir 'src/agt'
             srcDir 'src/vesna'
+            srcDir 'src/vesna/vesna'
         }
     }
 }

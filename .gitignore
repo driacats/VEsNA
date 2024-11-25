@@ -1,5 +1,8 @@
-**.gradle/
-**.DS_Store
-**build/
-**node_modules/
-**build/
+**/.gradle/
+**/.DS_Store
+**/build/
+**/node_modules/
+**/build/
+**/.godot/
+**/.godot/imported/
+**/bin/*
