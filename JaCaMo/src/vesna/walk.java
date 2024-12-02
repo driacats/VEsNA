@@ -29,8 +29,9 @@ public class walk extends DefaultInternalAction {
                 id = 0;
                 break;
             case "triangle":
-                int current_t = ag.rccMap.getCurrent();
-                List<Integer> adjs = ag.rccMap.getAdjs(current_t);
+                // // int current_t = ag.rccMap.getCurrent();
+                int current_t = ag.tm.getCurrent();
+                // List<Integer> adjs = ag.rccMap.getAdjs(current_t);
                 if ( adjs == null || adjs.isEmpty() )
                     return false;
                 for ( int adj : adjs ) {
@@ -49,6 +50,9 @@ public class walk extends DefaultInternalAction {
                     ag.sense(mov_completed);
                     return false;
                 }
+                if (ag.rccMap.isSecondTry( id )){
+                    System.out.println("It's the second time I try it!");
+                }
                 ag.rccMap.setTarget( id );
                 break;
             case "door":
@@ -58,33 +62,6 @@ public class walk extends DefaultInternalAction {
             default:
                 break;
         }
-        // // if ( args[0].toString().equals("random") )
-        // //     id = 0;
-        // // else if ( args[0].toString().equals("triangle") ){
-        // //     System.out.println("Looking for adjancent triangles");
-        // //     int current_triangle = ag.rccMap.getCurrent();
-        // //     System.out.println("I am currently on triangle " + current_triangle );
-        // //     List<Integer> adjs  = ag.rccMap.getAdjs(current_triangle);
-        // //     System.out.println("Adjacences are " + adjs);
-        // //     if ( adjs == null || adjs.isEmpty() ) {
-        // //         System.out.println("Adjs è vuota!");
-        // //         return false;
-        // //     }
-        // //     Unifier regionUnifier = new Unifier();
-        // //     ag.believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
-        // //     String current_region = regionUnifier.get("X").toString();
-        // //     System.out.println("My current region is " + current_region);
-        // //     for ( int idx : adjs ) {
-        // //         if ( ag.rccMap.getRegionFromTriangle( idx) == null )
-        // //             id = idx;
-        // //             System.out.println("I found: " + id + " that is not explored!");
-        // //             continue;
-        // //     }
-        // //     if ( id == -1 )
-        // //         System.out.println("Near triangles are all visited.");
-        // // }
-        // // else
-        // //     id = (long)((NumberTerm)args[1]).solve();
 
         JSONObject action = new JSONObject();
         action.put( "sender", "agent" );

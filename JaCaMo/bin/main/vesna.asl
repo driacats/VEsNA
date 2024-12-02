@@ -14,13 +14,23 @@ region_counter(0).
 +!find(Object)
     :   current_region(Region) & full_explored(Region)
     <-  .print("I explored completely the room, let's go back to the other room");
-        // TODO: if po(door, Region) o contrario -> tornare alla porta e andare indietro
         // TODO: meglio implementare tutto questo con DFS o BFS!
-        // vesna.walk(door, Id);
-        // .wait({+movement(completed, destination_reached)});
-        // +iAmAtDoor;
-        // -+current_region(OtherRegion);
-        // !find(Object).
+        if ( po( door(Id), Region ) ){
+            ?po(OtherRegion, door(Id));
+            vesna.walk(door, Id);
+            .wait({+movement(completed, destination_reached)});
+            -+current_region(OtherRegion);
+        } else {
+            if ( po(Region, door(Id))){
+                ?po(door(Id), OtherRegion);
+                vesna.walk(door, Id);
+                .wait({+movement(completed, destination_reached)});
+                -+current_region(OtherRegion);
+            } else {
+                .print("I really do not know where to go!");
+            };
+        };
+        !find(Object).
 
 +!find(Object)
     :   current_region(Region) & po(Region, door(Id)) & po(door(Id), OtherRegion) & not iAmAtDoor

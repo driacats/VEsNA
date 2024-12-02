@@ -117,7 +117,7 @@ func update_region() -> void:
 		var rcc : Dictionary = {}
 		rcc[ 'sender' ] = 'body'
 		rcc[ 'receiver' ] = 'vesna'
-		rcc[ 'type' ] = 'rcc'
+		rcc[ 'type' ] = 'triangle'
 		var data : Dictionary = {}
 		data[ 'current' ] = current_region
 		data[ 'adjs' ] = adj_triangles
@@ -153,11 +153,14 @@ func get_adj_triangles( triangle_idx : int ) -> Array:
 	for i in range( mesh.get_polygon_count() ):
 		var tr_i = mesh.get_polygon(i)
 		if ( current[0] in tr_i ):
-			adj_triangles.append(i)
+			if ( current[1] in tr_i || current[2] in tr_i ):
+				adj_triangles.append(i)
 		elif ( current[1] in tr_i ):
-			adj_triangles.append(i)
+			if ( current[0] in tr_i || current[2] in tr_i ):
+				adj_triangles.append(i)
 		elif ( current[2] in tr_i ):
-			adj_triangles.append(i)
+			if ( current[1] in tr_i || current[1] in tr_i):
+				adj_triangles.append(i)
 	adj_triangles.erase(triangle_idx)
 	return adj_triangles
 		

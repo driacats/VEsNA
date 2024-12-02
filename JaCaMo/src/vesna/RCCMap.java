@@ -13,6 +13,8 @@ public class RCCMap {
     private Map<Integer, List<Integer>> adjsMap;
     private int current;
     private int target;
+    // TODO: Settare l'old target. Se quando non riesco a raggiungere un target è già la seconda volta
+    // TODO  cerco un altro target tra gli adiacenti di quello non raggiunto.
 
     public RCCMap () {
         this.triangleMap = new HashMap<>();
@@ -38,6 +40,14 @@ public class RCCMap {
 
     public int getTarget(){
         return this.target;
+    }
+
+    public boolean isSecondTry(int t) {
+        return t == target;
+    }
+
+    public boolean isSecondTry(long t) {
+        return t == target;
     }
 
     public void addTriangle(Literal currentRegion, int triangle){
