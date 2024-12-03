@@ -5,6 +5,8 @@ import org.jgrapht.graph.*;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import jason.asSyntax.Literal;
 
 public class TriangleMap {
@@ -66,27 +68,73 @@ public class TriangleMap {
 		return this.target.index;
 	}
 
+	public boolean setTarget( int target ){
+		System.out.println("SET TARGET");
+		if ( this.target != null && target == this.target.index )
+			return false;
+		if ( ! triangleMap.containsVertex(new Triangle(target)) ){
+			throw new Error("The triangle is not in the graph!");
+		}
+		for (Triangle t : triangleMap.vertexSet()){
+			if (t.index == target){
+				this.target = t;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int nextTriangle(){
+		Triangle next = q.poll();
+		if (next == null)
+			return -1;
+		return next.index;
+	}
+
 	public void setCurrent( int current ){
-		if ( this.current.index == current )
+		if ( this.current != null && this.current.index == current )
 			return;
 		Triangle newCurrent = new Triangle( current );
-		newCurrent.flag = 1;
-		this.current = newCurrent;
+		if (!triangleMap.containsVertex(newCurrent))
+			triangleMap.addVertex(newCurrent);
+		for (Triangle t : triangleMap.vertexSet() ){
+			if ( t.index == current ){
+				t.flag = 1;
+				this.current = t;
+				break;
+			}
+		}
 	}
 
 	public void addEdges( int t, ArrayList<Integer> adjs){
 		Triangle current = new Triangle(t);
 		for ( Integer adj : adjs ){
 			Triangle adjT = new Triangle(adj);
+			if (!triangleMap.containsVertex(adjT)) {
+				triangleMap.addVertex(adjT);
+			}
+			for (Triangle tr : triangleMap.vertexSet()){
+				if (tr.index == adj ){
+					if (tr.flag == 0){
+						q.add(tr);
+					}
+				}
+			}
 			triangleMap.addEdge(current, adjT);
 		}
 	}
 
 	public ArrayList<Integer> getEdges( int v ){
 		ArrayList<Integer> adjs = new ArrayList<>();
-		for (Edge t : triangleMap.edgesOf(new Triangle(v)) ){
-			adjs.add(t.index);
+		for (DefaultEdge t : triangleMap.edgesOf(new Triangle(v)) ){
+			Triangle source = triangleMap.getEdgeSource(t);
+			Triangle target = triangleMap.getEdgeTarget(t);
+			if ( source.index != v )
+				adjs.add(source.index);
+			else if ( target.index != v )
+				adjs.add(target.index);
 		}
+		return adjs;
 	}
 
 	public void setCurrentRegion ( Literal region ){
@@ -99,4 +147,13 @@ public class TriangleMap {
 				t.flag = -1;
 		}
 	}
+
+	public Literal getRegion( int v ){
+		for ( Triangle t : triangleMap.vertexSet() ){
+			if ( t.index == v )
+				return t.region;
+		}
+		return null;
+	}
+
 }

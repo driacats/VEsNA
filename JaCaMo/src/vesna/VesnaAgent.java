@@ -99,7 +99,9 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private void handle_triangle(TransitionSystem ts, Unifier un, JSONObject rcc) {
         int current = rcc.getInt("current");
+        System.out.println("Set the current triangle to " + current);
         tm.setCurrent( current );
+        System.out.println("Got the current triangle to " + tm.getCurrent() );
         JSONArray adjs = rcc.getJSONArray("adjs");
         ArrayList<Integer> adjs_int = new ArrayList<Integer>();
         for (int i = 0; i<adjs.length(); i++ )

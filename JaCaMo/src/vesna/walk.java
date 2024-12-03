@@ -29,31 +29,11 @@ public class walk extends DefaultInternalAction {
                 id = 0;
                 break;
             case "triangle":
-                // // int current_t = ag.rccMap.getCurrent();
-                int current_t = ag.tm.getCurrent();
-                // List<Integer> adjs = ag.rccMap.getAdjs(current_t);
-                if ( adjs == null || adjs.isEmpty() )
-                    return false;
-                for ( int adj : adjs ) {
-                    if ( ag.rccMap.getRegionFromTriangle( adj ) == null ){
-                        id = adj;
-                        break;
-                    }
+                id = ag.tm.nextTriangle();
+                if ( id != -1 ){
+                    if (! ag.tm.setTarget( (int) id ))
+                        System.out.println("It's the second time I try this target.");
                 }
-                if ( id == -1 ) {
-                    System.out.println("[ALERT] All triangles are explored");
-                    System.out.println("Adjs: " + adjs);
-                    ag.rccMap.printMap();
-                    Literal ate = ASSyntax.createLiteral("all_triangles_explored");
-                    ag.sense(ate);
-                    Literal mov_completed = ASSyntax.createLiteral("movement", ASSyntax.createLiteral("stopped"), ASSyntax.createLiteral("error"));
-                    ag.sense(mov_completed);
-                    return false;
-                }
-                if (ag.rccMap.isSecondTry( id )){
-                    System.out.println("It's the second time I try it!");
-                }
-                ag.rccMap.setTarget( id );
                 break;
             case "door":
                 id = (long)((NumberTerm)args[1]).solve();
