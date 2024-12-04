@@ -28,13 +28,13 @@ public class walk extends DefaultInternalAction {
             case "random":
                 id = 0;
                 break;
-            case "triangle":
-                id = ag.tm.nextTriangle();
-                if ( id != -1 ){
-                    if (! ag.tm.setTarget( (int) id ))
-                        System.out.println("It's the second time I try this target.");
-                }
-                break;
+            // case "triangle":
+            //     id = ag.tm.nextTriangle();
+            //     if ( id != -1 ){
+            //         if (! ag.tm.setTarget( (int) id ))
+            //             System.out.println("It's the second time I try this target.");
+            //     }
+            //     break;
             case "door":
                 id = (long)((NumberTerm)args[1]).solve();
                 break;

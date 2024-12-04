@@ -15,8 +15,11 @@ var ws := WebSocketPeer.new()
 @onready var space : PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 @onready var mesh : NavigationMesh = get_node("/root/Node3D/NavigationRegion3D").navigation_mesh
 
-var old_region = -1
+var old_triangle = -1
 var end_communication = true
+
+var region_dict : Dictionary = {}
+var current_region = "region0";
 
 func _ready() -> void:
 	if tcp_server.listen( PORT ) != OK:
@@ -101,7 +104,13 @@ func manage( intention ):
 func walk( target, id ):
 	Log.info("I have to move ", target)
 	if target == 'random':
-		navigator.set_target_position(position + Vector3(0.0, 0.0, 8.0))
+		# navigator.set_target_position(position + Vector3(0.0, 0.0, 8.0))
+		var tr = get_current_triangle()
+		Log.info("Current triangle is " + str(tr) + " and old one is " + str(old_triangle))
+		if tr == -1:
+			tr = old_triangle
+		var adjs = get_adj_triangles( tr )
+		navigator.set_target_position( get_triangle_center(adjs[0]) )
 	if target == 'triangle':
 		navigator.set_target_position( get_triangle_center(id) )
 	if target == 'door':
@@ -111,19 +120,24 @@ func walk( target, id ):
 	end_communication = false
 	
 func update_region() -> void:
-	var current_region : int = get_current_region()
-	if current_region != old_region and current_region != -1:
-		var adj_triangles = get_adj_triangles(current_region)
-		var rcc : Dictionary = {}
-		rcc[ 'sender' ] = 'body'
-		rcc[ 'receiver' ] = 'vesna'
-		rcc[ 'type' ] = 'triangle'
-		var data : Dictionary = {}
-		data[ 'current' ] = current_region
-		data[ 'adjs' ] = adj_triangles
-		rcc[ 'data' ] = data
-		ws.send_text(JSON.stringify(rcc))
-		old_region = current_region
+	var current_triangle : int = get_current_triangle()
+	if current_triangle != old_triangle and current_triangle != -1:
+		if current_region not in region_dict:
+			region_dict[current_region] = []
+		if current_triangle not in region_dict[current_region]:
+			region_dict[current_region].append(current_triangle)
+		print(region_dict)
+		#var adj_triangles = get_adj_triangles(current_triangle)
+		#var rcc : Dictionary = {}
+		#rcc[ 'sender' ] = 'body'
+		#rcc[ 'receiver' ] = 'vesna'
+		#rcc[ 'type' ] = 'triangle'
+		#var data : Dictionary = {}
+		#data[ 'current' ] = current_triangle
+		#data[ 'adjs' ] = adj_triangles
+		#rcc[ 'data' ] = data
+		#ws.send_text(JSON.stringify(rcc))
+		old_triangle = current_triangle
 
 ## MESH FUNCTIONS
 func nearest_vertex(v: Array) -> int:
@@ -196,7 +210,7 @@ func triangle_contains_me( t_idx : int ) -> bool:
 	var v = (dot00 * dot12 - dot01 * dot02) * inv_den
 	return u >= 0 and v >= 0 and (u + v) <= 1
 
-func get_current_region() -> int:
+func get_current_triangle() -> int:
 	var vertices = mesh.get_vertices()
 	var idx : int = nearest_vertex(vertices)
 	var adj_triangles : Array = triangles_with_vertex(idx)

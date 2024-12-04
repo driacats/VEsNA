@@ -44,7 +44,7 @@ region_counter(0).
 +!find(Object)
     :   current_region(Region)
     <-  .print("I don't know where to go, random move!");
-        if (vesna.walk(triangle)){
+        if (vesna.walk(random)){
             .wait({+movement(Status, Reason)});
         };
         !find(Object).
@@ -88,6 +88,12 @@ region_counter(0).
     :   current_region(Region)
     <-  -rcc(SubRegion);
         +ntpp(SubRegion, Region).
+
++current_region(RegionName)
+    :   true
+    <-  .print("New current region!");
+        .term2string(RegionName, RegionString);
+        vesna.updateRegion(RegionString).
 
 { include("$jacamoJar/templates/common-cartago.asl") }
 { include("$jacamoJar/templates/common-moise.asl") }

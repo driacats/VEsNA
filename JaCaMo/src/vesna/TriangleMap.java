@@ -2,10 +2,12 @@ package vesna;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
-import java.util.Queue;
+import java.util.Stack;
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Map;
+import java.util.HashMap;
 
 import jason.asSyntax.Literal;
 
@@ -48,7 +50,8 @@ public class TriangleMap {
 
 	}
 
-	private Queue<Triangle> q = new LinkedList<>();
+	private Stack<Triangle> q = new Stack<>();
+	private Map<String, Stack<Triangle>> regionQueues = new HashMap<>();
 	
 	private Triangle current;
 	private Triangle target;
@@ -56,6 +59,8 @@ public class TriangleMap {
 	private Graph<Triangle, DefaultEdge> triangleMap = new SimpleGraph<>(DefaultEdge.class);
 
 	public void addTriangle( int idx ){
+		if ( triangleMap.containsVertex(new Triangle(idx)))
+			return;
 		Triangle t = new Triangle( idx );
 		triangleMap.addVertex(t);
 	}
@@ -85,7 +90,9 @@ public class TriangleMap {
 	}
 
 	public int nextTriangle(){
-		Triangle next = q.poll();
+		if (q.empty())
+			return -1;
+		Triangle next = q.pop();
 		if (next == null)
 			return -1;
 		return next.index;
@@ -101,6 +108,7 @@ public class TriangleMap {
 			if ( t.index == current ){
 				t.flag = 1;
 				this.current = t;
+				q.remove(t);
 				break;
 			}
 		}
@@ -116,7 +124,7 @@ public class TriangleMap {
 			for (Triangle tr : triangleMap.vertexSet()){
 				if (tr.index == adj ){
 					if (tr.flag == 0){
-						q.add(tr);
+						q.push(tr);
 					}
 				}
 			}

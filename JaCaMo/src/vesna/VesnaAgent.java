@@ -13,7 +13,7 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
 
     private WsClient client;
     // public RCCMap rccMap;
-    public TriangleMap tm;
+    // public TriangleMap tm;
 
     // We override the loadInitialAS to create the WebSocket connection with the body.
     // With the super function we load the beliefs (containing the address and the port)
@@ -40,7 +40,7 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         client.connect();
 
 //        rccMap = new RCCMap();
-        tm = new TriangleMap();
+        // tm = new TriangleMap();
     }
 
     public void act(String action) {
@@ -65,15 +65,15 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         String event_status = event.getString("status");
         String event_reason = event.getString("reason");
         try {
-            // int current_t = rccMap.getCurrent();
-            int current_t = tm.getCurrent();
-            // int target_t = rccMap.getTarget();
-            int target_t = tm.getTarget();
-            if ( current_t != target_t ){
-                System.out.println("Current target " + target_t + " is different from current triangle " + current_t );
-                // rccMap.addNotReachedTriangle(target_t);
-                tm.setVNotReachable(target_t);
-            }
+            // // int current_t = rccMap.getCurrent();
+            // int current_t = tm.getCurrent();
+            // // int target_t = rccMap.getTarget();
+            // int target_t = tm.getTarget();
+            // if ( current_t != target_t ){
+            //     System.out.println("Current target " + target_t + " is different from current triangle " + current_t );
+            //     // rccMap.addNotReachedTriangle(target_t);
+            //     tm.setVNotReachable(target_t);
+            // }
 
             InternalAction signal = getIA(".signal");
             Literal event_literal = ASSyntax.createLiteral(event_type, ASSyntax.createLiteral(event_status), ASSyntax.createLiteral(event_reason));
@@ -97,36 +97,36 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
         }
     }
 
-    private void handle_triangle(TransitionSystem ts, Unifier un, JSONObject rcc) {
-        int current = rcc.getInt("current");
-        System.out.println("Set the current triangle to " + current);
-        tm.setCurrent( current );
-        System.out.println("Got the current triangle to " + tm.getCurrent() );
-        JSONArray adjs = rcc.getJSONArray("adjs");
-        ArrayList<Integer> adjs_int = new ArrayList<Integer>();
-        for (int i = 0; i<adjs.length(); i++ )
-            adjs_int.add(adjs.getInt(i));
-        // rccMap.addAdjsToTriangle(region, adjs_int);
-        tm.addEdges(current, adjs_int);
+    // private void handle_triangle(TransitionSystem ts, Unifier un, JSONObject rcc) {
+    //     int current = rcc.getInt("current");
+    //     System.out.println("Set the current triangle to " + current);
+    //     tm.setCurrent( current );
+    //     System.out.println("Got the current triangle to " + tm.getCurrent() );
+    //     JSONArray adjs = rcc.getJSONArray("adjs");
+    //     ArrayList<Integer> adjs_int = new ArrayList<Integer>();
+    //     for (int i = 0; i<adjs.length(); i++ )
+    //         adjs_int.add(adjs.getInt(i));
+    //     // rccMap.addAdjsToTriangle(region, adjs_int);
+    //     tm.addEdges(current, adjs_int);
 
-        Unifier regionUnifier = new Unifier();
-        try{
-            System.out.println("[HANDLE RCC] entering");
-            believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
-            System.out.println("[HANDLE RCC] got belief");
-            String current_region = regionUnifier.get("X").toString();
-            ////  System.out.println("[HANDLE RCC] got value");
-            ////  System.out.println(current_region);
-            ////  System.out.println(rccMap.isTriangleExplored(ASSyntax.parseLiteral(current_region), region));
-            ////  System.out.println("Triangle contained in region: " + rccMap.getRegionFromTriangle(region));
-            ////  rccMap.addTriangle(ASSyntax.parseLiteral(current_region), region);
-            ////  rccMap.updateCurrent(region);
-            ////  rccMap.printMap();
-            tm.setCurrentRegion( ASSyntax.createLiteral( current_region ) );
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+    //     Unifier regionUnifier = new Unifier();
+    //     try{
+    //         System.out.println("[HANDLE RCC] entering");
+    //         believes(Literal.parseLiteral("current_region(X)"), regionUnifier);
+    //         System.out.println("[HANDLE RCC] got belief");
+    //         String current_region = regionUnifier.get("X").toString();
+    //         ////  System.out.println("[HANDLE RCC] got value");
+    //         ////  System.out.println(current_region);
+    //         ////  System.out.println(rccMap.isTriangleExplored(ASSyntax.parseLiteral(current_region), region));
+    //         ////  System.out.println("Triangle contained in region: " + rccMap.getRegionFromTriangle(region));
+    //         ////  rccMap.addTriangle(ASSyntax.parseLiteral(current_region), region);
+    //         ////  rccMap.updateCurrent(region);
+    //         ////  rccMap.printMap();
+    //         tm.setCurrentRegion( ASSyntax.createLiteral( current_region ) );
+    //     } catch (Exception e){
+    //         e.printStackTrace();
+    //     }
+    // }
 
     @Override
     public void handleMsg(String msg){
@@ -142,9 +142,9 @@ public class VesnaAgent extends Agent implements WsClientMsgHandler{
             handle_event(ts, un, data);
         } else if ( type.equals("sight") ){
             handle_sight(ts, un, data);
-        } else if ( type.equals("triangle") ){
-            handle_triangle(ts, un, data);
-        }
+        } // else if ( type.equals("triangle") ){
+        //     handle_triangle(ts, un, data);
+        // }
     }
 
 }
