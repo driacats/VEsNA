@@ -4,6 +4,7 @@ region_counter(0).
 +!start
     :   true
     <-  .wait(2000);
+        +initialized;
         .print("Starting actor");
         !find(prova).
 
@@ -90,7 +91,7 @@ region_counter(0).
         +ntpp(SubRegion, Region).
 
 +current_region(RegionName)
-    :   true
+    :   initialized
     <-  .print("New current region!");
         .term2string(RegionName, RegionString);
         vesna.updateRegion(RegionString).

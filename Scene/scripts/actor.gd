@@ -44,7 +44,7 @@ func _physics_process( delta: float ) -> void:
 			var intention : Dictionary = JSON.parse_string( msg )
 			manage( intention )
 		
-		update_region()
+		update_triangle()
 	
 	if navigator.is_navigation_finished():
 		if not end_communication:
@@ -100,6 +100,9 @@ func manage( intention ):
 		var target : String = data['target']
 		var id : int = data['id']
 		walk( target, id )
+	elif type == 'region':
+		var new_region : String = data['region']
+		update_region( new_region )
 		
 func walk( target, id ):
 	Log.info("I have to move ", target)
@@ -114,12 +117,13 @@ func walk( target, id ):
 	if target == 'triangle':
 		navigator.set_target_position( get_triangle_center(id) )
 	if target == 'door':
-		print(id)
 		var door_node = instance_from_id(id)
+		var dist = door_node.position - position
+		
 		navigator.set_target_position( door_node.position )
 	end_communication = false
 	
-func update_region() -> void:
+func update_triangle() -> void:
 	var current_triangle : int = get_current_triangle()
 	if current_triangle != old_triangle and current_triangle != -1:
 		if current_region not in region_dict:
@@ -127,17 +131,12 @@ func update_region() -> void:
 		if current_triangle not in region_dict[current_region]:
 			region_dict[current_region].append(current_triangle)
 		print(region_dict)
-		#var adj_triangles = get_adj_triangles(current_triangle)
-		#var rcc : Dictionary = {}
-		#rcc[ 'sender' ] = 'body'
-		#rcc[ 'receiver' ] = 'vesna'
-		#rcc[ 'type' ] = 'triangle'
-		#var data : Dictionary = {}
-		#data[ 'current' ] = current_triangle
-		#data[ 'adjs' ] = adj_triangles
-		#rcc[ 'data' ] = data
-		#ws.send_text(JSON.stringify(rcc))
 		old_triangle = current_triangle
+		
+func update_region( new_region : String) -> void:
+	current_region = new_region
+	if current_region not in region_dict:
+		region_dict[ current_region ] = []
 
 ## MESH FUNCTIONS
 func nearest_vertex(v: Array) -> int:
