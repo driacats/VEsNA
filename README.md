@@ -1,4 +1,4 @@
-> [!ALERT]
+> [!IMPORTANT]
 > Moved to [VEsNA Toolkit](https://github.com/VEsNA-ToolKit)!
 
 # VEsNA
