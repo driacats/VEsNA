@@ -1,3 +1,6 @@
+> [!ALERT]
+> Moved to [VEsNA Toolkit](https://github.com/VEsNA-ToolKit)!
+
 # VEsNA
 
 **VEsNA** is a framework for managing **V**irtual **E**nvironments via **N**atural Language **A**gents. It is composed of three pieces:
